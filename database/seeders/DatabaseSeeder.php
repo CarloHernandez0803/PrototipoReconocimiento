@@ -84,7 +84,6 @@ class DatabaseSeeder extends Seeder
 
             Resolucion::factory()->create([ // Crea una resolución
                 'incidencia' => $incidencia->id_incidencia, // Asigna el ID de la incidencia
-                'administrador' => $this->obtenerAdministradorAleatorio() // Asigna un administrador aleatorio
             ]);
         });
     }

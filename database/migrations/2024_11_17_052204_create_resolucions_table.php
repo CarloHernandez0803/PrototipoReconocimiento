@@ -15,7 +15,7 @@ return new class extends Migration
                 'En Proceso',
                 'Resuelto'
             ]);
-            $table->timestamp('fecha_resolucion')->nullable()->defaultValue(null);
+            $table->timestamp('fecha_resolucion')->nullable()->default(null);
             $table->foreignId('incidencia')
                   ->constrained('Incidencias', 'id_incidencia')
                   ->onDelete('cascade')

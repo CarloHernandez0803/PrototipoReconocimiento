@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id('id_usuario'); 
             $table->string('nombre', 45); 
             $table->string('apellidos', 60); 
-            $table->string('correo', 45); 
-            $table->string('contraseña', 30); 
+            $table->string('correo', 45)->unique(); 
+            $table->string('contraseña', 60); 
             $table->enum('rol', [
                 'Administrador', 
                 'Coordinador', 

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id('id_sesion');
             $table->string('token_sesion', 255);
             $table->timestamp('fecha_inicio')->useCurrent();
-            $table->timestamp('fecha_fin')->nullable()->defaultValue(null);
+            $table->timestamp('fecha_fin')->nullable()->default(null);
             $table->foreignId('usuario')
                   ->constrained('Usuarios', 'id_usuario')
                   ->onDelete('cascade')

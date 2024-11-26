@@ -15,7 +15,7 @@ return new class extends Migration
                 'Aprobada'
             ]);
             $table->timestamp('fecha_solicitud')->useCurrent();
-            $table->timestamp('fecha_respuesta')->nullable()->defaultValue(null);
+            $table->timestamp('fecha_respuesta')->nullable()->default(null);
             $table->foreignId('administrador')
                   ->nullable()
                   ->constrained('Usuarios', 'id_usuario')

@@ -23,9 +23,9 @@ return new class extends Migration
                 'Respondida',
                 'Resuelta'
             ]);
-            $table->text('respuesta')->nullable()->defaultValue(null);
+            $table->text('respuesta')->nullable()->default(null);
             $table->timestamp('fecha_pub')->useCurrent();
-            $table->timestamp('fecha_act')->nullable()->defaultValue(null);
+            $table->timestamp('fecha_act')->nullable()->default(null);
             $table->foreignId('usuario')
                   ->nullable()
                   ->constrained('Usuarios', 'id_usuario')
