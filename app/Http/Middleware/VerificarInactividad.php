@@ -10,25 +10,12 @@ class VerificarInactividad
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->session()->has('last_activity')) 
-        {
-            $lastActivity = $request->session()->get('last_activity');
-            $inactivityLimit = 20 * 60;
-
-            if (time() - $lastActivity > $inactivityLimit) 
-            {
-                $sesion = Sesion::find($request->session()->get('session_id'));
-                if ($sesion) 
-                {
-                    $sesion->fecha_fin = now();
-                    $sesion->save();
-                }
-
+        if ($request->session()->has('last_activity')) {
+            if (time() - $request->session()->get('last_activity') > 1200) {
                 $request->session()->flush();
-                return redirect()->route('login')->with('error', 'Su sesión ha expirado por inactividad.');
+                return redirect('/login')->with('error', 'Sesión expirada por inactividad.');
             }
         }
-
         $request->session()->put('last_activity', time());
         return $next($request);
     }

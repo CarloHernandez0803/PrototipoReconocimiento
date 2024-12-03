@@ -15,8 +15,8 @@ return new class extends Migration
             $table->timestamp('fecha_fin')->nullable()->default(null);
             $table->foreignId('usuario')
                   ->constrained('Usuarios', 'id_usuario')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                  ->cascadeOnDelete()
+                  ->cascadeOnUpdate();
         });
     }
 

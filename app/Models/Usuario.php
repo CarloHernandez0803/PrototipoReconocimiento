@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
 class Usuario extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $table = 'Usuarios';
     protected $primaryKey = 'id_usuario';
@@ -21,36 +20,36 @@ class Usuario extends Authenticatable
         'apellidos',
         'correo',
         'contraseña',
-        'rol',
+        'rol'
     ];
 
     protected $hidden = [
         'contraseña',
     ];
 
+    public function setContraseñaAttribute($value)
+    {
+        $this->attributes['contraseña'] = Hash::make($value);
+    }
+
+    public function verificarContraseña($plainPassword)
+    {
+        return Hash::check($plainPassword, $this->contraseña);
+    }
+
     public function sesiones()
     {
         return $this->hasMany(Sesion::class, 'usuario', 'id_usuario');
     }
 
-    public function solicitudesComoCoordinador()
-    {
-        return $this->hasMany(SolicitudPrueba::class, 'coordinador', 'id_usuario');
-    }
-
-    public function solicitudesComoAdministrador()
-    {
-        return $this->hasMany(SolicitudPrueba::class, 'administrador', 'id_usuario');
-    }
-
     public function evaluaciones()
     {
-        return $this->hasMany(EvaluacionRed::class, 'alumno', 'id_usuario');
+        return $this->hasMany(Evaluacion::class, 'alumno', 'id_usuario');
     }
 
     public function experiencias()
     {
-        return $this->hasMany(ExperienciaUsuario::class, 'usuario', 'id_usuario');
+        return $this->hasMany(Experiencia::class, 'usuario', 'id_usuario');
     }
 
     public function incidencias()
@@ -58,14 +57,14 @@ class Usuario extends Authenticatable
         return $this->hasMany(Incidencia::class, 'coordinador', 'id_usuario');
     }
 
-    public function resolucionesIncidencias()
+    public function solicitudes()
     {
-        return $this->hasMany(ResolucionIncidencia::class, 'administrador', 'id_usuario');
+        return $this->hasMany(Solicitud::class, 'alumno', 'id_usuario');
     }
 
-    public function preguntasRespuestas()
+    public function preguntas()
     {
-        return $this->hasMany(PreguntaRespuesta::class, 'usuario', 'id_usuario');
+        return $this->hasMany(Pregunta::class, 'usuario', 'id_usuario');
     }
 
     public function notificaciones()

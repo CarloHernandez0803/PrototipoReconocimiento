@@ -10,7 +10,7 @@ class Sesion extends Model
     use HasFactory;
     
     protected $table = 'Sesiones';
-    protected $primaryKey = 'id_sesion';
+    protected $primaryKey = 'id';
     public $timestamps = false;
 
     protected $fillable = [
@@ -23,5 +23,10 @@ class Sesion extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'usuario', 'id_usuario');
+    }
+
+    public function getKeyName()
+    {
+        return 'id';
     }
 }

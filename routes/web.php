@@ -12,28 +12,20 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Rutas protegidas por autenticación
+// Rutas protegidas por autenticación y verificaciones
 Route::middleware(['verificar.sesion'])->group(function () {
-    
-    // Rutas para administradores
-    Route::middleware(['verificar.rol:Administrador'])->group(function () {
-        Route::get('/admin/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
-        Route::resource('usuarios', UsuarioController::class);
-    });
+    // Dashboard para Administradores
+    Route::get('/Administrador/dashboard', function () {
+        return view('Administrador.dashboard');
+    })->name('Administrador.dashboard');
 
-    // Rutas para coordinadores
-    Route::middleware(['verificar.rol:Coordinador'])->group(function () {
-        Route::get('/coordinador/dashboard', function () {
-            return view('coordinador.dashboard');
-        })->name('coordinador.dashboard');
-    });
+    // Dashboard para Coordinadores
+    Route::get('/Coordinador/dashboard', function () {
+        return view('Coordinador.dashboard');
+    })->name('Coordinador.dashboard');
 
-    // Rutas para alumnos
-    Route::middleware(['verificar.rol:Alumno'])->group(function () {
-        Route::get('/alumno/dashboard', function () {
-            return view('alumno.dashboard');
-        })->name('alumno.dashboard');
-    });
+    // Dashboard para Alumnos
+    Route::get('/Alumno/dashboard', function () {
+        return view('Alumno.dashboard');
+    })->name('Alumno.dashboard');
 });

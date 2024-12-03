@@ -4,9 +4,9 @@ use Illuminate\Support\Str;
 
 return [
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    'driver' => 'array',
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
+    'lifetime' => 20,
 
     'expire_on_close' => false,
 
@@ -17,15 +17,13 @@ return [
     'connection' => env('SESSION_CONNECTION'),
 
     'table' => 'sesiones',
+    'primary_key' => 'id_sesion',
 
     'store' => env('SESSION_STORE'),
 
     'lottery' => [2, 100],
 
-    'cookie' => env(
-        'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
-    ),
+    'cookie' => env('SESSION_COOKIE', Str::slug(env('APP_NAME', 'laravel'), '_').'_session'),
 
     'path' => '/',
 

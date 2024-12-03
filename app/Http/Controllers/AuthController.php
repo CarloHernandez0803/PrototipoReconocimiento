@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use App\Models\Sesion;
-use App\Models\Notificacion;
+// use App\Models\Notificacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -26,16 +26,13 @@ class AuthController extends Controller
         $usuario = Usuario::where('correo', $request->correo)->first();
 
         if (!$usuario || !Hash::check($request->contraseña, $usuario->contraseña)) {
-            return back()->withErrors([
-                'correo' => 'Las credenciales proporcionadas son incorrectas.',
-            ]);
+            return back()->withErrors(['correo' => 'Las credenciales proporcionadas son incorrectas.']);
         }
 
         $sesion = new Sesion([
             'token_sesion' => Str::random(60),
             'usuario' => $usuario->id_usuario,
             'fecha_inicio' => now(),
-            'fecha_fin' => null
         ]);
         $sesion->save();
 
@@ -43,15 +40,15 @@ class AuthController extends Controller
             'user_id' => $usuario->id_usuario,
             'user_role' => $usuario->rol,
             'session_id' => $sesion->id_sesion,
-            'last_activity' => time()
+            'last_activity' => now(),
         ]);
 
-        Notificacion::create([
+        /* Notificacion::create([
             'tipo_notificacion' => 'Creación de Cuenta',
             'contenido' => 'Inicio de sesión exitoso',
             'fecha_envio' => now(),
             'usuario' => $usuario->id_usuario
-        ]);
+        ]); */
 
         return $this->redirectBasedOnRole($usuario->rol);
     }
@@ -60,26 +57,26 @@ class AuthController extends Controller
     {
         switch ($rol) {
             case 'Administrador':
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('Administrador.dashboard');
             case 'Coordinador':
-                return redirect()->route('coordinador.dashboard');
+                return redirect()->route('Coordinador.dashboard');
             case 'Alumno':
-                return redirect()->route('alumno.dashboard');
+                return redirect()->route('Alumno.dashboard');
             default:
-                return redirect()->route('dashboard');
+                return redirect('/');
         }
     }
 
     public function logout(Request $request)
     {
         if ($request->session()->has('session_id')) {
-            $sesion = Sesion::find($request->session()->get('session_id'));
+            $sesion = Sesion::where('id_sesion', $request->session()->get('session_id'))->first();
             if ($sesion) {
                 $sesion->fecha_fin = now();
                 $sesion->save();
             }
         }
-
+        
         $request->session()->flush();
         return redirect('/');
     }
