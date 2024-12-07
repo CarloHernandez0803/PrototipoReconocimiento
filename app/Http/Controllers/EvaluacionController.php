@@ -9,7 +9,11 @@ class EvaluacionController extends Controller
 {
     public function index()
     {
+<<<<<<< HEAD
         $usuarios = Evaluacion::all();
+=======
+        $evaluaciones = Evaluacion::paginate(10);
+>>>>>>> 202c96f (Quinta version proyecto)
         return view('evaluaciones.index', compact('evaluaciones'));
     }
 

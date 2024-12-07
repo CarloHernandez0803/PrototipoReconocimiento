@@ -20,6 +20,13 @@ class Incidencia extends Model
         'coordinador',
     ];
 
+<<<<<<< HEAD
+=======
+    protected $casts = [
+        'fecha_reporte' => 'datetime',
+    ];
+
+>>>>>>> 202c96f (Quinta version proyecto)
     public function coordinador()
     {
         return $this->belongsTo(Usuario::class, 'coordinador', 'id_usuario');

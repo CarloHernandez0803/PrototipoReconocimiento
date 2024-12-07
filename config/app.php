@@ -5,6 +5,7 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -55,10 +56,19 @@ return [
     |
     */
 
+=======
+    'name' => env('APP_NAME', 'Laravel'),
+
+    'env' => env('APP_ENV', 'production'),
+
+    'debug' => (bool) env('APP_DEBUG', false),
+
+>>>>>>> 202c96f (Quinta version proyecto)
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -121,11 +131,21 @@ return [
     | will not be safe. Please do this before deploying an application!
     |
     */
+=======
+    'timezone' => 'UTC',
+
+    'locale' => 'es-MX',
+
+    'fallback_locale' => 'es-MX',
+
+    'faker_locale' => 'es-MX',
+>>>>>>> 202c96f (Quinta version proyecto)
 
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
@@ -139,11 +159,14 @@ return [
     |
     */
 
+=======
+>>>>>>> 202c96f (Quinta version proyecto)
     'maintenance' => [
         'driver' => 'file',
         // 'store' => 'redis',
     ],
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -155,6 +178,8 @@ return [
     |
     */
 
+=======
+>>>>>>> 202c96f (Quinta version proyecto)
     'providers' => ServiceProvider::defaultProviders()->merge([
         /*
          * Package Service Providers...
@@ -172,6 +197,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
     ])->toArray(),
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Class Aliases
@@ -183,6 +209,8 @@ return [
     |
     */
 
+=======
+>>>>>>> 202c96f (Quinta version proyecto)
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),

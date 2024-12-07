@@ -21,8 +21,13 @@
             </div>
 
             <div class="mt-4">
+<<<<<<< HEAD
                 <x-label for="password" value="{{ __('Contraseña') }}" />
                 <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+=======
+                <x-label for="contraseña" value="{{ __('Contraseña') }}" />
+                <x-input id="contraseña" class="block mt-1 w-full" type="password" name="contraseña" required autocomplete="current-password" />
+>>>>>>> 202c96f (Quinta version proyecto)
             </div>
 
             <div class="flex items-center justify-end mt-4">

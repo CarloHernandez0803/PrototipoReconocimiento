@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Sesion extends Model
 {
     use HasFactory;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 202c96f (Quinta version proyecto)
     protected $table = 'Sesiones';
     protected $primaryKey = 'id';
     public $timestamps = false;

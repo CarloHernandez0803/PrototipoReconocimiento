@@ -9,7 +9,11 @@ class ExperienciaController extends Controller
 {
     public function index()
     {
+<<<<<<< HEAD
         $experiencias = Experiencia::all();
+=======
+        $experiencias = Experiencia::paginate(10);
+>>>>>>> 202c96f (Quinta version proyecto)
         return view('experiencias.index', compact('experiencias'));
     }
 

@@ -23,6 +23,13 @@ class Evaluacion extends Model
         'alumno',
     ];
 
+<<<<<<< HEAD
+=======
+    protected $casts = [
+        'fecha_evaluacion' => 'datetime',
+    ];
+
+>>>>>>> 202c96f (Quinta version proyecto)
     public function alumno()
     {
         return $this->belongsTo(Usuario::class, 'alumno', 'id_usuario');

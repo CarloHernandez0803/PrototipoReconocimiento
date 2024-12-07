@@ -38,12 +38,21 @@ class DatabaseSeeder extends Seeder
         DB::beginTransaction(); // Iniciar la transacción
         
         try { // Intenta ejecutar el código
+<<<<<<< HEAD
             $this->crearUsuarios();
             $this->crearSesiones();
             $this->crearEvaluacionesYExperiencias();
             $this->crearIncidenciasYResoluciones();
             $this->crearSolicitudes();
             $this->crearPreguntasYNotificaciones();
+=======
+            /*$this->crearUsuarios();
+            $this->crearSesiones();
+            $this->crearEvaluacionesYExperiencias();
+            $this->crearIncidenciasYResoluciones();*/
+            $this->crearSolicitudes();
+            //$this->crearPreguntasYNotificaciones();
+>>>>>>> 202c96f (Quinta version proyecto)
 
             DB::commit(); // Confirmar la transacción
         } catch (\Exception $e) { // Captura cualquier error
@@ -90,10 +99,19 @@ class DatabaseSeeder extends Seeder
 
     private function crearSolicitudes(): void
     {
+<<<<<<< HEAD
         Usuario::where('rol', 'Coordinador')->each(function ($coordinador) { // Itera sobre los coordinadores
             Solicitud::factory()->create([ // Crea una solicitud
                 'coordinador' => $coordinador->id_usuario, // Asigna el ID del coordinador
                 'administrador' => $this->obtenerAdministradorAleatorio() // Asigna un administrador aleatorio
+=======
+        Usuario::where('rol', 'Coordinador')->each(function ($coordinador) {
+            Solicitud::factory()->create([
+                'coordinador' => $coordinador->id_usuario,
+                'administrador' => $this->obtenerAdministradorAleatorio(),
+                'alumno' => $this->obtenerAlumnoAleatorio(),
+                'fecha_solicitud' => now()->subDays(rand(1, 30)),
+>>>>>>> 202c96f (Quinta version proyecto)
             ]);
         });
     }
@@ -111,4 +129,12 @@ class DatabaseSeeder extends Seeder
     {
         return Usuario::where('rol', 'Administrador')->inRandomOrder()->first()->id_usuario; // Obtiene un administrador aleatorio
     }
+<<<<<<< HEAD
+=======
+
+    private function obtenerAlumnoAleatorio(): int
+{
+    return Usuario::where('rol', 'Alumno')->inRandomOrder()->first()->id_usuario;
+}
+>>>>>>> 202c96f (Quinta version proyecto)
 }

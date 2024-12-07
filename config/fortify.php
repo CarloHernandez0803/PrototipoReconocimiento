@@ -4,6 +4,7 @@ use Laravel\Fortify\Features;
 
 return [
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Fortify Guard
@@ -45,10 +46,17 @@ return [
     |
     */
 
+=======
+    'guard' => 'web',
+
+    'passwords' => 'users',
+
+>>>>>>> 202c96f (Quinta version proyecto)
     'username' => 'email',
 
     'email' => 'email',
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Lowercase Usernames
@@ -86,10 +94,17 @@ return [
     |
     */
 
+=======
+    'lowercase_usernames' => true,
+
+    'home' => '/dashboard',
+
+>>>>>>> 202c96f (Quinta version proyecto)
     'prefix' => '',
 
     'domain' => null,
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Fortify Routes Middleware
@@ -114,11 +129,16 @@ return [
     |
     */
 
+=======
+    'middleware' => ['web'],
+
+>>>>>>> 202c96f (Quinta version proyecto)
     'limiters' => [
         'login' => 'login',
         'two-factor' => 'two-factor',
     ],
 
+<<<<<<< HEAD
     /*
     |--------------------------------------------------------------------------
     | Register View Routes
@@ -145,6 +165,12 @@ return [
 
     'features' => [
         Features::registration(),
+=======
+    'views' => true,
+
+    'features' => [
+        // Features::registration(),
+>>>>>>> 202c96f (Quinta version proyecto)
         Features::resetPasswords(),
         // Features::emailVerification(),
         Features::updateProfileInformation(),
@@ -155,5 +181,8 @@ return [
             // 'window' => 0,
         ]),
     ],
+<<<<<<< HEAD
 
+=======
+>>>>>>> 202c96f (Quinta version proyecto)
 ];
