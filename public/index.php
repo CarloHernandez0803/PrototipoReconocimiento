@@ -5,8 +5,6 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-<<<<<<< HEAD
-=======
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
@@ -18,15 +16,10 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
->>>>>>> 202c96f (Quinta version proyecto)
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
 }
 
-<<<<<<< HEAD
-require __DIR__.'/../vendor/autoload.php';
-
-=======
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
@@ -51,7 +44,6 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
->>>>>>> 202c96f (Quinta version proyecto)
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
