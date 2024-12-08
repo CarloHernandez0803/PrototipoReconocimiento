@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 
 class SesionController extends Controller
 {
-<<<<<<< HEAD
-    //
-=======
     /**
      * Display a listing of the resource.
      */
@@ -64,5 +61,4 @@ class SesionController extends Controller
     {
         //
     }
->>>>>>> 202c96f (Quinta version proyecto)
 }

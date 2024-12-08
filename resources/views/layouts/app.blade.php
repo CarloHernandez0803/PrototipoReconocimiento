@@ -22,11 +22,7 @@
 
         <!-- Contenido principal -->
         <div class="flex flex-col min-h-screen bg-gray-100">
-<<<<<<< HEAD
-            @livewire('navigation-menu')
-=======
             @include('navigation-menu')
->>>>>>> 202c96f (Quinta version proyecto)
 
             <!-- Page Heading -->
             @if (isset($header))
@@ -43,11 +39,7 @@
             </main>
 
             <!-- Footer -->
-<<<<<<< HEAD
-            <footer class="bg-black text-white py-8 h-24">
-=======
             <footer class="bg-purple-900 text-white py-8 h-24">
->>>>>>> 202c96f (Quinta version proyecto)
                 <div class="max-w-7xl mx-auto text-center">
                     <p>&copy; {{ date('Y') }}. Carlo Hernandez Fernandez. Javier Salazar Campos. Derechos reservados. ©</p>
                 </div>

@@ -21,13 +21,10 @@ class Experiencia extends Model
         'usuario',
     ];
 
-<<<<<<< HEAD
-=======
     protected $casts = [
         'fecha_experiencia' => 'datetime',
     ];
 
->>>>>>> 202c96f (Quinta version proyecto)
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'usuario', 'id_usuario');

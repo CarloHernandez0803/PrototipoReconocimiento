@@ -9,11 +9,7 @@ class IncidenciaController extends Controller
 {
     public function index()
     {
-<<<<<<< HEAD
-        $incidencias = Incidencia::all();
-=======
         $incidencias = Incidencia::paginate(10);
->>>>>>> 202c96f (Quinta version proyecto)
         return view('incidencias.index', compact('incidencias'));
     }
 

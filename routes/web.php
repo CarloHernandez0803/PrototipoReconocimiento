@@ -3,33 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsuarioController;
-<<<<<<< HEAD
-
-Route::get('/', function () {
-    return redirect()->route('login');
-});
-
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-// Rutas protegidas por autenticación y verificaciones
-Route::middleware(['verificar.sesion'])->group(function () {
-    // Dashboard para Administradores
-    Route::get('/Administrador/dashboard', function () {
-        return view('Administrador.dashboard');
-    })->name('Administrador.dashboard');
-
-    // Dashboard para Coordinadores
-    Route::get('/Coordinador/dashboard', function () {
-        return view('Coordinador.dashboard');
-    })->name('Coordinador.dashboard');
-
-    // Dashboard para Alumnos
-    Route::get('/Alumno/dashboard', function () {
-        return view('Alumno.dashboard');
-    })->name('Alumno.dashboard');
-=======
 use App\Http\Controllers\EntrenamientoController;
 use App\Http\Controllers\PruebaController;
 use App\Http\Controllers\SolicitudController;
@@ -65,5 +38,4 @@ Route::middleware(['web'])->group(function () {
         Route::resource('preguntas', PreguntaController::class);
         Route::resource('evaluaciones', EvaluacionController::class);
     });
->>>>>>> 202c96f (Quinta version proyecto)
 });

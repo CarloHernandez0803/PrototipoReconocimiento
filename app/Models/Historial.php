@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 202c96f (Quinta version proyecto)
 use Illuminate\Database\Eloquent\Model;
 
 class Historial extends Model

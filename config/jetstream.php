@@ -5,15 +5,6 @@ use Laravel\Jetstream\Http\Middleware\AuthenticateSession;
 
 return [
 
-<<<<<<< HEAD
-    'stack' => 'livewire',
-
-    'middleware' => ['web'],
-
-    'auth_session' => null,
-
-    'guard' => 'web',
-=======
     /*
     |--------------------------------------------------------------------------
     | Jetstream Stack
@@ -65,7 +56,6 @@ return [
     | these features or you can even remove all of these if you need to.
     |
     */
->>>>>>> 202c96f (Quinta version proyecto)
 
     'features' => [
         // Features::termsAndPrivacyPolicy(),
@@ -75,9 +65,6 @@ return [
         Features::accountDeletion(),
     ],
 
-<<<<<<< HEAD
-    'profile_photo_disk' => 'public',
-=======
     /*
     |--------------------------------------------------------------------------
     | Profile Photo Disk
@@ -91,5 +78,4 @@ return [
 
     'profile_photo_disk' => 'public',
 
->>>>>>> 202c96f (Quinta version proyecto)
 ];

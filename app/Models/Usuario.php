@@ -2,16 +2,6 @@
 
 namespace App\Models;
 
-<<<<<<< HEAD
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
-
-class Usuario extends Authenticatable
-{
-    use HasFactory, Notifiable;
-=======
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,7 +23,6 @@ use App\Models\Pregunta;
 class Usuario extends Model implements AuthenticatableContract
 {
     use HasFactory, Authenticatable;
->>>>>>> 202c96f (Quinta version proyecto)
 
     protected $table = 'Usuarios';
     protected $primaryKey = 'id_usuario';
@@ -49,25 +38,18 @@ class Usuario extends Model implements AuthenticatableContract
 
     protected $hidden = [
         'contraseña',
-<<<<<<< HEAD
-=======
         'remember_token'
     ];
 
     protected $casts = [
         'fecha_registro' => 'datetime',
->>>>>>> 202c96f (Quinta version proyecto)
     ];
 
     public function setContraseñaAttribute($value)
     {
-<<<<<<< HEAD
-        $this->attributes['contraseña'] = Hash::make($value);
-=======
         $this->attributes['contraseña'] = Str::startsWith($value, '$2y$') 
             ? $value 
             : Hash::make($value);
->>>>>>> 202c96f (Quinta version proyecto)
     }
 
     public function verificarContraseña($plainPassword)

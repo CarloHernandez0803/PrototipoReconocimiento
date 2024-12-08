@@ -24,20 +24,15 @@ class Pregunta extends Model
         'usuario',
     ];
 
-<<<<<<< HEAD
-=======
     protected $casts = [
         'fecha_pub' => 'datetime',
         'fecha_act' => 'datetime',
     ];
 
->>>>>>> 202c96f (Quinta version proyecto)
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'usuario', 'id_usuario');
     }
-<<<<<<< HEAD
-=======
 
     public static function boot()
     {
@@ -51,5 +46,4 @@ class Pregunta extends Model
             $model->fecha_act = now(); // Establece la fecha actual al momento de la actualización
         });
     }
->>>>>>> 202c96f (Quinta version proyecto)
 }

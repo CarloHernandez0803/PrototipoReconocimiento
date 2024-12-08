@@ -2,22 +2,14 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
-use App\Models\Incidencia;
-=======
 use App\Models\Pregunta;
->>>>>>> 202c96f (Quinta version proyecto)
 use Illuminate\Http\Request;
 
 class PreguntaController extends Controller
 {
     public function index()
     {
-<<<<<<< HEAD
-        $incidencias = Incidencia::all();
-=======
         $preguntas = Pregunta::paginate(10);
->>>>>>> 202c96f (Quinta version proyecto)
         return view('preguntas.index', compact('preguntas'));
     }
 
@@ -64,10 +56,7 @@ class PreguntaController extends Controller
             'categoria' => 'nullable|in:Funcionalidad del Sistema,Reportes de Errores,Solicitudes de Mejora,Otros',
             'estado' => 'nullable|in:Pendiente,Respondida,Resuelta',
             'respuesta' => 'nullable|string',
-<<<<<<< HEAD
-=======
             'fecha_act' => 'nullable|date',
->>>>>>> 202c96f (Quinta version proyecto)
             'usuario' => 'nullable|exists:Usuarios,id_usuario',
         ]);
 

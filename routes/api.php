@@ -3,11 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-=======
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,4 +17,3 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
->>>>>>> 202c96f (Quinta version proyecto)

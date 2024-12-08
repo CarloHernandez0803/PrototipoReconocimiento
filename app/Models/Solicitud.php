@@ -19,10 +19,6 @@ class Solicitud extends Model
         'fecha_respuesta',
         'administrador',
         'coordinador',
-<<<<<<< HEAD
-    ];
-
-=======
         'alumno',
     ];
 
@@ -36,20 +32,13 @@ class Solicitud extends Model
         return $this->belongsTo(Usuario::class, 'coordinador', 'id_usuario');
     }
 
->>>>>>> 202c96f (Quinta version proyecto)
     public function administrador()
     {
         return $this->belongsTo(Usuario::class, 'administrador', 'id_usuario');
     }
 
-<<<<<<< HEAD
-    public function coordinador()
-    {
-        return $this->belongsTo(Usuario::class, 'coordinador', 'id_usuario');
-=======
     public function alumno()
     {
         return $this->belongsTo(Usuario::class, 'alumno', 'id_usuario');
->>>>>>> 202c96f (Quinta version proyecto)
     }
 }
