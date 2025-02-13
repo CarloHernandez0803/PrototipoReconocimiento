@@ -24,10 +24,6 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-<<<<<<< HEAD
-            \App\Http\Middleware\VerificarInactividad::class,
-=======
->>>>>>> 202c96f (Quinta version proyecto)
         ],
 
         'api' => [
@@ -39,13 +35,8 @@ class Kernel extends HttpKernel
 
     protected $middlewareAliases = [
         'auth' => \App\Http\Middleware\Authenticate::class,
-<<<<<<< HEAD
-        //'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        // 'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
-=======
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
->>>>>>> 202c96f (Quinta version proyecto)
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
@@ -56,9 +47,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verificar.sesion' => \App\Http\Middleware\VerificarSesion::class,
         'verificar.inactividad' => \App\Http\Middleware\VerificarInactividad::class,
-<<<<<<< HEAD
-=======
-        'verificar.rol' => \App\Http\Middleware\VerificarRol::class
->>>>>>> 202c96f (Quinta version proyecto)
+        'verificar.rol' => \App\Http\Middleware\VerificarRol::class,
     ];
 }

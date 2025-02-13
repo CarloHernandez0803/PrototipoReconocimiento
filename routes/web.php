@@ -13,6 +13,8 @@ use App\Http\Controllers\EvaluacionController;
 use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\SenPruebaController;
 use App\Http\Controllers\SenEntrenamientoController;
+use App\Http\Controllers\ResolucionController;
+use App\Http\Controllers\BaseDatosController;   
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
@@ -35,7 +37,15 @@ Route::middleware(['web'])->group(function () {
         Route::resource('solicitudes', SolicitudController::class);
         Route::resource('experiencias', ExperienciaController::class);
         Route::resource('incidencias', IncidenciaController::class);
+        Route::get('/timeline', [IncidenciaController::class, 'timeline'])->name('incidencias.timeline');
         Route::resource('preguntas', PreguntaController::class);
         Route::resource('evaluaciones', EvaluacionController::class);
+        Route::get('resoluciones/create/{id}', [ResolucionController::class, 'create'])->name('resoluciones.create');
+        Route::post('resoluciones/store/{id}', [ResolucionController::class, 'store'])->name('resoluciones.store');
+        Route::get('resoluciones/edit/{id}', [ResolucionController::class, 'edit'])->name('resoluciones.edit');
+        Route::put('resoluciones/update/{id}', [ResolucionController::class, 'update'])->name('resoluciones.update');
+        Route::get('/base_datos', [BaseDatosController::class, 'index'])->name('base_datos.index');
+        Route::get('/base_datos/backup', [BaseDatosController::class, 'backup'])->name('base_datos.backup');
+        Route::post('/base_datos/restore', [BaseDatosController::class, 'restore'])->name('base_datos.restore');
     });
 });

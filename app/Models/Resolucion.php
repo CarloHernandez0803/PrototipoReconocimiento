@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Incidencia;
 
 class Resolucion extends Model
 {
@@ -17,6 +18,10 @@ class Resolucion extends Model
         'estado',
         'fecha_resolucion',
         'incidencia',
+    ];
+
+    protected $casts = [
+        'fecha_resolucion' => 'datetime',
     ];
 
     public function incidencia()

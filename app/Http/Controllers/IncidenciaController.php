@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Incidencia;
 use Illuminate\Http\Request;
+use App\Models\Resolucion;
+use App\Models\Usuario;
 
 class IncidenciaController extends Controller
 {
     public function index()
     {
-        $incidencias = Incidencia::paginate(10);
+        $incidencias = Incidencia::with('resolucion')->paginate(10);
         return view('incidencias.index', compact('incidencias'));
     }
 
@@ -33,7 +35,7 @@ class IncidenciaController extends Controller
 
     public function show(string $id)
     {
-        $incidencia = Incidencia::findOrFail($id);
+        $incidencia = Incidencia::with('resolucion')->findOrFail($id);
         return view('incidencias.show', compact('incidencia'));
     }
 
@@ -64,5 +66,11 @@ class IncidenciaController extends Controller
         $incidencia->delete();
 
         return redirect()->route('incidencias.index')->with('success', 'Incidencia eliminada exitosamente');
+    }
+
+    public function timeline()
+    {
+        $incidencias = Incidencia::with(['resolucion'])->paginate(10);
+        return view('incidencias.timeline', compact('incidencias'));
     }
 }

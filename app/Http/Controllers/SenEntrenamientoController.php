@@ -10,7 +10,7 @@ class SenEntrenamientoController extends Controller
 {
     public function index()
     {
-        $senalamientos = SenEntrenamiento::all(); //Extrae todos los lotes registrados
+        $senalamientos = SenEntrenamiento::paginate(10); //Extrae todos los lotes registrados con paginación
         return view('senalamientos_entrenamientos.index', compact('senalamientos')); //Muestra la vista de los lotes
     }
 
@@ -32,8 +32,8 @@ class SenEntrenamientoController extends Controller
         /* Guardar las imágenes */
         $rutas = []; //Generar un array para almacenar las rutas de las imagenes
         foreach ($request->file('imagenes') as $imagen) { //Recorrer todas las imagenes
-            $ruta = $imagen->store('entrenamientos/' . strtolower($request->categoria), 'public'); //Guardar las imagenes en la carpeta correspondiente
-            $rutas[] = Storage::url($ruta); //Almacenar las rutas de las imagenes en el array
+            $ruta = Storage::disk('ftp')->putFile("entrenamientos/{$request->categoria}", $imagen); //Guardar las imagenes en la carpeta correspondiente
+            $rutas[] = $ruta; //Almacenar las rutas de las imagenes en el array
         }
 
         /* Crear el lote */
@@ -51,6 +51,11 @@ class SenEntrenamientoController extends Controller
     {
         $senalamiento = SenEntrenamiento::findOrFail($id); //Busca el lote por su id
         $senalamiento->rutas = json_decode($senalamiento->rutas); //Decodifica las rutas
+
+        $imagenes = array_map(function ($ruta) {
+            return Storage::disk('ftp')->url($ruta);
+        }, $senalamiento->rutas);
+
         return view('senalamientos_entrenamientos.show', compact('senalamiento')); //Muestra la vista del lote
     }
 
@@ -78,14 +83,14 @@ class SenEntrenamientoController extends Controller
             /* Eliminar imágenes anteriores */
             $rutasAnteriores = json_decode($senalamiento->rutas, true); //Obtiene las rutas anteriores
             foreach ($rutasAnteriores as $ruta) { //Recorre las rutas anteriores
-                Storage::disk('public')->delete(str_replace('/storage/', '', $ruta)); //Elimina las rutas anteriores
+                Storage::disk('ftp')->delete($ruta); //Elimina las rutas anteriores
             }
 
             /* Guardar nuevas imágenes */
             $nuevasRutas = [];  //Generar un array para almacenar las rutas de las imagenes
             foreach ($request->file('imagenes') as $imagen) { //Recorrer todas las imagenes
-                $ruta = $imagen->store('entrenamientos/' . strtolower($request->categoria), 'public'); //Guardar las imagenes en la carpeta correspondiente
-                $nuevasRutas[] = Storage::url($ruta); //Almacenar las rutas de las imagenes en el array
+                $ruta = Storage::disk('ftp')->putFile("entrenamientos/{$request->categoria}", $imagen); //Guardar las imagenes en la carpeta correspondiente
+                $nuevasRutas[] = $ruta; //Almacenar las rutas de las imagenes en el array
             }
             $datos['rutas'] = json_encode($nuevasRutas); //Almacenar las rutas de las imagenes
         }
@@ -102,7 +107,7 @@ class SenEntrenamientoController extends Controller
         /* Eliminar imágenes */
         $rutas = json_decode($senalamiento->rutas, true); //Obtiene las rutas
         foreach ($rutas as $ruta) { //Recorre las rutas
-            Storage::disk('public')->delete(str_replace('/storage/', '', $ruta)); //Elimina las rutas anteriores del lote 
+            Storage::disk('ftp')->delete($ruta); //Elimina las rutas anteriores del lote 
         }
 
         $senalamiento->delete(); //Elimina el lote

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Resolucion;
 
 class Incidencia extends Model
 {
@@ -23,6 +24,11 @@ class Incidencia extends Model
     protected $casts = [
         'fecha_reporte' => 'datetime',
     ];
+
+    public function resolucion()
+    {
+        return $this->hasOne(Resolucion::class, 'incidencia', 'id_incidencia');
+    }
 
     public function coordinador()
     {

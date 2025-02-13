@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detalles del Reporte de Incidencia') }}
+            {{ __('Detalles del Lote de Señalamientos para Pruebas') }}
         </h2>
     </x-slot>
 
@@ -17,15 +17,7 @@
                                         {{ __('ID') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->id_incidencia }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Tipo de incidencia') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->tipo_experiencia }}
+                                        {{ $senalamiento->id_senalamiento_prueba }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -33,37 +25,35 @@
                                         {{ __('Descripción') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->descripcion }}
+                                        {{ $senalamiento->descripcion }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Resolución') }}
+                                        {{ __('Categoría') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        @if ($incidencia->resolucion)
-                                            <p><strong>Estado:</strong> {{ $incidencia->resolucion->estado }}</p>
-                                            <p><strong>Fecha:</strong> {{ $incidencia->resolucion->fecha_resolucion ? $incidencia->resolucion->fecha_resolucion->format('d/m/Y H:i') : 'No disponible' }}</p>
-                                            <a href="{{ route('resoluciones.edit', $incidencia->resolucion->id_resolucion) }}" class="text-indigo-600 hover:text-indigo-900">Editar Resolución</a>
-                                        @else
-                                            <a href="{{ route('resoluciones.create', $incidencia->id_incidencia) }}" class="text-green-600 hover:text-green-900">Registrar Resolución</a>
-                                        @endif
+                                        {{ $senalamiento->categoria }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Fecha de reporte') }}
+                                        {{ __('Imágenes') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->fecha_reporte ? $incidencia->fecha_reporte->format('d/m/Y H:i') : __('No disponible') }}
+                                        <div class="flex flex-wrap space-x-4">
+                                            @foreach ($senalamiento->rutas as $ruta)
+                                                <img src="{{ Storage::disk('ftp')->url($ruta) }}" alt="Imagen del señalamiento" class="h-20 w-20 rounded-md shadow-md">
+                                            @endforeach
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Usuario') }}
+                                        {{ __('Fecha de creación') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->coordinador }}
+                                        {{ $senalamiento->fecha_creacion ? $senalamiento->fecha_creacion->format('d/m/Y H:i') : __('No disponible') }}
                                     </td>
                                 </tr>
                             </table>
@@ -72,7 +62,7 @@
                 </div>
             </div>
             <div class="block mt-8">
-                <a href="{{ route('incidencias.index') }}" class="bg-purple-900 hover:bg-gray-300 text-white font-bold py-2 px-4 rounded">{{ __('Volver a la lista') }}</a>
+                <a href="{{ route('senalamientos_pruebas.index') }}" class="bg-purple-900 hover:bg-gray-300 text-white font-bold py-2 px-4 rounded">{{ __('Volver a la lista') }}</a>
             </div>
         </div>
     </div>

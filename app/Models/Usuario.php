@@ -45,6 +45,11 @@ class Usuario extends Model implements AuthenticatableContract
         'fecha_registro' => 'datetime',
     ];
 
+    public function getNombreCompletoAttribute()
+    {
+        return "{$this->nombre} {$this->apellido}";
+    }
+
     public function setContraseñaAttribute($value)
     {
         $this->attributes['contraseña'] = Str::startsWith($value, '$2y$') 

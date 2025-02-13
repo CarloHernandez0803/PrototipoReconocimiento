@@ -13,8 +13,6 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <!-- Styles -->
         @livewireStyles
     </head>
     <body class="font-sans antialiased">
@@ -44,11 +42,16 @@
                     <p>&copy; {{ date('Y') }}. Carlo Hernandez Fernandez. Javier Salazar Campos. Derechos reservados. ©</p>
                 </div>
             </footer>
-
         </div>
 
         @stack('modals')
-
         @livewireScripts
+
+        <script>
+            document.addEventListener('livewire:load', function () {
+                console.log('Alpine.js inicializado correctamente');
+                Alpine.start();
+            });
+        </script>
     </body>
 </html>
