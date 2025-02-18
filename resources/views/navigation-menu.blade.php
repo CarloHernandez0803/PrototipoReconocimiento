@@ -108,7 +108,7 @@
                 @endif
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
-                    <x-nav-link class="text-white">
+                    <x-nav-link class="text-white" href="{{ route('calendario.index') }}">
                         {{ __('Calendario') }}
                     </x-nav-link>
                 </div>

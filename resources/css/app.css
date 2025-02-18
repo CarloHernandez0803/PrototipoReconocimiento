@@ -5,3 +5,7 @@
 [x-cloak] {
     display: none;
 }
+
+.fc-toolbar-title {
+    text-transform: capitalize;
+}

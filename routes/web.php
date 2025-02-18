@@ -14,7 +14,12 @@ use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\SenPruebaController;
 use App\Http\Controllers\SenEntrenamientoController;
 use App\Http\Controllers\ResolucionController;
-use App\Http\Controllers\BaseDatosController;   
+use App\Http\Controllers\BaseDatosController;
+use App\Http\Controllers\CalendarioController;
+use App\Http\Controllers\ReporteEficaciaController;
+use App\Http\Controllers\ReporteSolicitudesController;
+use App\Http\Controllers\ReporteExperienciasController;
+use App\Http\Controllers\ReporteRecursosController;   
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
@@ -47,5 +52,11 @@ Route::middleware(['web'])->group(function () {
         Route::get('/base_datos', [BaseDatosController::class, 'index'])->name('base_datos.index');
         Route::get('/base_datos/backup', [BaseDatosController::class, 'backup'])->name('base_datos.backup');
         Route::post('/base_datos/restore', [BaseDatosController::class, 'restore'])->name('base_datos.restore');
+        Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
+        Route::get('/calendario/eventos', [CalendarioController::class, 'getEventos'])->name('calendario.eventos');
+        Route::get('/reportes/eficacia', [ReporteEficaciaController::class, 'index'])->name('reportes.eficacia');
+        Route::get('/reportes/solicitudes', [ReporteSolicitudesController::class, 'index'])->name('reportes.solicitudes');
+        Route::get('/reportes/experiencias', [ReporteExperienciasController::class, 'index'])->name('reportes.experiencias');
+        Route::get('/reportes/recursos', [ReporteRecursosController::class, 'index'])->name('reportes.recursos');
     });
 });
