@@ -19,7 +19,9 @@ use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\ReporteEficaciaController;
 use App\Http\Controllers\ReporteSolicitudesController;
 use App\Http\Controllers\ReporteExperienciasController;
-use App\Http\Controllers\ReporteRecursosController;   
+use App\Http\Controllers\ReporteRecursosController;
+use App\Http\Controllers\ReporteIncidenciasController;
+use App\Http\Controllers\ReporteUsuariosController;
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
@@ -58,5 +60,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('/reportes/solicitudes', [ReporteSolicitudesController::class, 'index'])->name('reportes.solicitudes');
         Route::get('/reportes/experiencias', [ReporteExperienciasController::class, 'index'])->name('reportes.experiencias');
         Route::get('/reportes/recursos', [ReporteRecursosController::class, 'index'])->name('reportes.recursos');
+        Route::get('/reportes/incidencias', [ReporteIncidenciasController::class, 'index'])->name('reportes.incidencias');
+        Route::get('/reportes/usuarios', [ReporteUsuariosController::class, 'index'])->name('reportes.usuarios');
     });
 });

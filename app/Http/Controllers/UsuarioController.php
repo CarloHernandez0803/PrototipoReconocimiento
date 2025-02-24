@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Events\UsuarioCreado;
 
 class UsuarioController extends Controller
 {
@@ -26,7 +27,7 @@ class UsuarioController extends Controller
             'nombre' => 'required|max:45',
             'apellidos' => 'required|max:60',
             'correo' => 'required|email|unique:Usuarios,correo|max:45',
-            'contraseña' => ['required', 'confirmed', Password::min(8)
+            'password' => ['required', 'confirmed', Password::min(8)
                 ->letters()
                 ->mixedCase()
                 ->numbers()
@@ -35,11 +36,13 @@ class UsuarioController extends Controller
             'rol' => 'required|in:Administrador,Coordinador,Alumno',
         ]);
 
-        $validated['contraseña'] = Hash::make($validated['contraseña']);
+        $validated['contraseña'] = Hash::make($validated['password']);
 
-        \DB::transaction(function () use ($validated) {
-            Usuario::create($validated);
+        $usuario = \DB::transaction(function () use ($validated) {
+            return Usuario::create($validated);
         });
+
+        event(new UsuarioCreado($usuario));
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente');
     }

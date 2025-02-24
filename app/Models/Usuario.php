@@ -2,27 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Models\Sesion;
-use App\Models\Historial;
-use App\Models\Evaluacion;
-use App\Models\Notificacion;
-use App\Models\SenPrueba;
-use App\Models\SenEntrenamiento;
-use App\Models\Incidencia;
-use App\Models\Experiencia;
-use App\Models\Solicitud;
-use App\Models\Resolucion;
-use App\Models\Pregunta;
+use Illuminate\Notifications\Notifiable;
 
 class Usuario extends Model implements AuthenticatableContract
 {
-    use HasFactory, Authenticatable;
+    use HasFactory, Authenticatable, Notifiable;
 
     protected $table = 'Usuarios';
     protected $primaryKey = 'id_usuario';
@@ -33,23 +23,34 @@ class Usuario extends Model implements AuthenticatableContract
         'apellidos',
         'correo',
         'contraseña',
-        'rol'
+        'rol',
+        'remember_token',
     ];
 
     protected $hidden = [
         'contraseña',
-        'remember_token'
+        'remember_token',
     ];
 
     protected $casts = [
         'fecha_registro' => 'datetime',
     ];
 
+    public function getAuthPassword()
+    {
+        return $this->contraseña;
+    }
+
+    public function routeNotificationForMail($notification)
+    {
+        return $this->correo;
+    }
+
     public function getNombreCompletoAttribute()
     {
         return "{$this->nombre} {$this->apellido}";
     }
-
+    
     public function setContraseñaAttribute($value)
     {
         $this->attributes['contraseña'] = Str::startsWith($value, '$2y$') 
@@ -95,5 +96,15 @@ class Usuario extends Model implements AuthenticatableContract
     public function notificaciones()
     {
         return $this->hasMany(Notificacion::class, 'usuario', 'id_usuario');
+    }
+
+    public function incidenciasReportadas()
+    {
+        return $this->hasMany(Incidencia::class, 'coordinador', 'id_usuario');
+    }
+
+    public function resoluciones()
+    {
+        return $this->hasMany(Resolucion::class, 'usuario_resolucion', 'id_usuario');
     }
 }
