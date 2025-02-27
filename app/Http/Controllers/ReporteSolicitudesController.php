@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Solicitud;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\SolicitudExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteSolicitudesController extends Controller
 {
@@ -37,5 +40,19 @@ class ReporteSolicitudesController extends Controller
             'labels' => $labels,
             'datasets' => $datasets,
         ]);
+    }
+
+    public function downloadPDF(Request $request)
+    {
+        $data = $this->index($request)->getData();
+
+        $pdf = Pdf::loadView('reportes.solicitudes', compact('data'));
+        return $pdf->download('reporte_solicitudes.pdf');
+    }
+
+    public function downloadExcel(Request $request)
+    {
+        $data = $this->index($request)->getData();
+        return Excel::download(new SolicitudExport($data), 'reporte_solicitudes.xlsx');
     }
 }

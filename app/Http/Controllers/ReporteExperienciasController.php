@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Experiencia;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\ExperienciaExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteExperienciasController extends Controller
 {
@@ -79,5 +82,19 @@ class ReporteExperienciasController extends Controller
         ];
 
         return response()->json($chartData);
+    }
+
+    public function downloadPDF(Request $request)
+    {
+        $data = $this->index($request)->getData();
+
+        $pdf = Pdf::loadView('reportes.experiencias', compact('data'));
+        return $pdf->download('reporte_experiencias.pdf');
+    }
+
+    public function downloadExcel(Request $request)
+    {
+        $data = $this->index($request)->getData();
+        return Excel::download(new ExperienciaExport($data), 'reporte_experiencias.xlsx');
     }
 }

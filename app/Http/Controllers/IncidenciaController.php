@@ -6,6 +6,7 @@ use App\Models\Incidencia;
 use Illuminate\Http\Request;
 use App\Models\Resolucion;
 use App\Models\Usuario;
+use App\Events\ReporteFalloRegistrado;
 
 class IncidenciaController extends Controller
 {
@@ -28,7 +29,9 @@ class IncidenciaController extends Controller
             'coordinador' => 'nullable|exists:Usuarios,id_usuario',
         ]);
 
-        Incidencia::create($validated);
+        $incidencia = Incidencia::create($validated);
+
+        event(new ReporteFalloRegistrado($incidencia));
 
         return redirect()->route('incidencias.index')->with('success', 'Incidencia creada exitosamente');
     }

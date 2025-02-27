@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Experiencia;
 use Illuminate\Http\Request;
+use App\Events\ExperienciaUsuarioRegistrada;
 
 class ExperienciaController extends Controller
 {
@@ -27,7 +28,9 @@ class ExperienciaController extends Controller
             'usuario' => 'nullable|exists:Usuarios,id_usuario',
         ]);
 
-        Experiencia::create($validated);
+        $experiencia = Experiencia::create($validated);
+
+        event(new ExperienciaUsuarioRegistrada($experiencia));
 
         return redirect()->route('experiencias.index')->with('success', 'Experiencia de usuario creada exitosamente');
     }

@@ -7,6 +7,10 @@ use App\Models\Usuario;
 use App\Models\Solicitud;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\UsuarioExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteUsuariosController extends Controller
 {
@@ -20,7 +24,7 @@ class ReporteUsuariosController extends Controller
 
             $baseQuery = $query->select([
                 'usuarios.id_usuario',
-                'usuarios.nombre',
+                DB::raw('CONCAT(usuarios.nombre, " ", usuarios.apellidos) as nombre'),
                 'usuarios.rol',
                 DB::raw('COUNT(DISTINCT solicitudes_prueba.id_solicitud) as actividades'),
                 DB::raw('AVG(CASE 
@@ -41,26 +45,52 @@ class ReporteUsuariosController extends Controller
             }
 
             $usuarios = $baseQuery
-                ->groupBy('usuarios.id_usuario', 'usuarios.nombre', 'usuarios.rol')
-                ->get()
-                ->map(function ($usuario) {
-                    return [
-                        'nombre' => $usuario->nombre,
-                        'rol' => $usuario->rol,
-                        'actividades' => (int)$usuario->actividades,
-                        'tiempo_promedio' => $usuario->tiempo_promedio ? round($usuario->tiempo_promedio, 2) : null
-                    ];
+                ->groupBy('usuarios.id_usuario', 'usuarios.nombre', 'usuarios.apellidos', 'usuarios.rol') 
+                ->get();
+
+            $totalActividades = $usuarios->sum('actividades');
+            $tiempoPromedioAprobacion = $usuarios->avg('tiempo_promedio');
+
+            $usuariosMasActivos = $usuarios
+                ->sortByDesc('actividades')
+                ->take(5);
+
+            $tiempoPromedioPorRol = $usuarios
+                ->groupBy('rol')
+                ->map(function ($group) {
+                    return $group->avg('tiempo_promedio');
                 });
 
-            return response()->json($usuarios);
+            return response()->json([
+                'resumen' => [
+                    'total_actividades' => $totalActividades,
+                    'tiempo_promedio_aprobacion' => round($tiempoPromedioAprobacion, 2),
+                ],
+                'usuarios_mas_activos' => $usuariosMasActivos,
+                'tiempo_promedio_por_rol' => $tiempoPromedioPorRol,
+                'detalle_usuarios' => $usuarios,
+            ]);
 
         } catch (\Exception $e) {
             Log::error('Error en ReporteUsuariosController: ' . $e->getMessage());
-            
             return response()->json([
                 'error' => 'Ha ocurrido un error al procesar la solicitud',
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function downloadPDF(Request $request)
+    {
+        $data = $this->index($request)->getData();
+
+        $pdf = Pdf::loadView('reportes.usuarios', compact('data'));
+        return $pdf->download('reporte_usuarios.pdf');
+    }
+
+    public function downloadExcel(Request $request)
+    {
+        $data = $this->index($request)->getData();
+        return Excel::download(new UsuarioExport($data), 'reporte_usuarios.xlsx');
     }
 }

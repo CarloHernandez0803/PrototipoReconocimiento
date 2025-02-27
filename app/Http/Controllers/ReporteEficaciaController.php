@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Evaluacion;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\EficaciaExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteEficaciaController extends Controller
 {
@@ -44,5 +47,19 @@ class ReporteEficaciaController extends Controller
             'labels' => $labels,
             'datasets' => $datasets,
         ]);
+    }
+
+    public function downloadPDF(Request $request)
+    {
+        $data = $this->index($request)->getData();
+
+        $pdf = Pdf::loadView('reportes.eficacia', compact('data'));
+        return $pdf->download('reporte_eficacia.pdf');
+    }
+
+    public function downloadExcel(Request $request)
+    {
+        $data = $this->index($request)->getData();
+        return Excel::download(new EficaciaExport($data), 'reporte_eficacia.xlsx');
     }
 }

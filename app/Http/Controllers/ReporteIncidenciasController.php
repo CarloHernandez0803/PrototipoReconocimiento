@@ -6,29 +6,30 @@ use Illuminate\Http\Request;
 use App\Models\Incidencia;
 use App\Models\ResolucionIncidencia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\IncidenciaExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteIncidenciasController extends Controller
 {
     public function index(Request $request)
     {
         try {
-            // Obtener fechas de filtro
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
 
-            // Consulta base para obtener las incidencias
             $query = Incidencia::query()
                 ->select([
                     'Incidencias.tipo_experiencia',
                     DB::raw('COUNT(*) as total'),
                     DB::raw('AVG(TIMESTAMPDIFF(HOUR, Incidencias.fecha_reporte, Resolucion_Incidencias.fecha_resolucion)) as tiempo_promedio'),
                     'Resolucion_Incidencias.estado as estado_resolucion',
-                    'u1.nombre as reportado_por' 
+                    DB::raw('CONCAT(u1.nombre, " ", u1.apellidos) as reportado_por')
                 ])
                 ->leftJoin('Resolucion_Incidencias', 'Incidencias.id_incidencia', '=', 'Resolucion_Incidencias.incidencia')
                 ->leftJoin('Usuarios as u1', 'Incidencias.coordinador', '=', 'u1.id_usuario');
 
-            // Aplicar filtro de fechas si se proporcionan
             if ($startDate && $endDate) {
                 $query->whereBetween('Incidencias.fecha_reporte', [
                     date('Y-m-d 00:00:00', strtotime($startDate)),
@@ -36,23 +37,60 @@ class ReporteIncidenciasController extends Controller
                 ]);
             }
 
-            // Agrupar y obtener los resultados
             $incidencias = $query
-                ->groupBy('Incidencias.tipo_experiencia', 'Resolucion_Incidencias.estado', 'u1.nombre')
+                ->groupBy('Incidencias.tipo_experiencia', 'Resolucion_Incidencias.estado', 'u1.nombre', 'u1.apellidos')
                 ->get();
 
-            // Devolver los datos en formato JSON
+            $totalIncidencias = $incidencias->sum('total');
+            $incidenciasResueltas = $incidencias->where('estado_resolucion', 'Resuelto')->sum('total');
+            $porcentajeResueltas = $totalIncidencias > 0 ? ($incidenciasResueltas / $totalIncidencias) * 100 : 0;
+
+            $incidenciasFrecuentes = $incidencias
+                ->groupBy('tipo_experiencia')
+                ->map(function ($group) {
+                    return $group->sum('total');
+                })
+                ->sortDesc()
+                ->take(5);
+
+            $tiempoPromedioPorTipo = $incidencias
+                ->groupBy('tipo_experiencia')
+                ->map(function ($group) {
+                    return $group->avg('tiempo_promedio');
+                });
+
             return response()->json([
-                'incidencias' => $incidencias
+                'resumen' => [
+                    'total_incidencias' => $totalIncidencias,
+                    'incidencias_resueltas' => $incidenciasResueltas,
+                    'porcentaje_resueltas' => round($porcentajeResueltas, 2),
+                    'tiempo_promedio_resolucion' => $incidencias->avg('tiempo_promedio'),
+                ],
+                'incidencias_frecuentes' => $incidenciasFrecuentes,
+                'tiempo_promedio_por_tipo' => $tiempoPromedioPorTipo,
+                'detalle_incidencias' => $incidencias,
             ]);
 
         } catch (\Exception $e) {
-            // Registrar el error y devolver una respuesta de error
             \Log::error('Error en ReporteIncidenciasController: ' . $e->getMessage());
             return response()->json([
                 'error' => 'Error al procesar el reporte de incidencias',
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function downloadPDF(Request $request)
+    {
+        $data = $this->index($request)->getData();
+
+        $pdf = Pdf::loadView('reportes.incidencias', compact('data'));
+        return $pdf->download('reporte_incidencias.pdf');
+    }
+
+    public function downloadExcel(Request $request)
+    {
+        $data = $this->index($request)->getData();
+        return Excel::download(new IncidenciaExport($data), 'reporte_incidencias.xlsx');
     }
 }

@@ -6,6 +6,8 @@ use App\Models\Solicitud;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\SolicitudPruebaRecibida;
+use App\Events\SolicitudPruebaRespondida;
 
 class SolicitudController extends Controller
 {
@@ -41,7 +43,9 @@ class SolicitudController extends Controller
         $validated['estado'] = 'Pendiente';
         $validated['coordinador'] = $user->id_usuario;
 
-        Solicitud::create($validated);
+        $solicitud = Solicitud::create($validated);
+
+        event(new SolicitudPruebaRecibida($solicitud));
 
         return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba creado exitosamente');
     }
@@ -76,6 +80,8 @@ class SolicitudController extends Controller
                 $validated['fecha_respuesta'] = now();
                 $validated['administrador'] = $user->id_usuario;
             }
+
+            event(new SolicitudPruebaRespondida($solicitud));
 
         } else {
             $validated = $request->validate([

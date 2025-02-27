@@ -47,20 +47,38 @@ Route::middleware(['web'])->group(function () {
         Route::get('/timeline', [IncidenciaController::class, 'timeline'])->name('incidencias.timeline');
         Route::resource('preguntas', PreguntaController::class);
         Route::resource('evaluaciones', EvaluacionController::class);
+
         Route::get('resoluciones/create/{id}', [ResolucionController::class, 'create'])->name('resoluciones.create');
         Route::post('resoluciones/store/{id}', [ResolucionController::class, 'store'])->name('resoluciones.store');
         Route::get('resoluciones/edit/{id}', [ResolucionController::class, 'edit'])->name('resoluciones.edit');
         Route::put('resoluciones/update/{id}', [ResolucionController::class, 'update'])->name('resoluciones.update');
+
         Route::get('/base_datos', [BaseDatosController::class, 'index'])->name('base_datos.index');
         Route::get('/base_datos/backup', [BaseDatosController::class, 'backup'])->name('base_datos.backup');
         Route::post('/base_datos/restore', [BaseDatosController::class, 'restore'])->name('base_datos.restore');
+
         Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
         Route::get('/calendario/eventos', [CalendarioController::class, 'getEventos'])->name('calendario.eventos');
+
         Route::get('/reportes/eficacia', [ReporteEficaciaController::class, 'index'])->name('reportes.eficacia');
         Route::get('/reportes/solicitudes', [ReporteSolicitudesController::class, 'index'])->name('reportes.solicitudes');
         Route::get('/reportes/experiencias', [ReporteExperienciasController::class, 'index'])->name('reportes.experiencias');
         Route::get('/reportes/recursos', [ReporteRecursosController::class, 'index'])->name('reportes.recursos');
         Route::get('/reportes/incidencias', [ReporteIncidenciasController::class, 'index'])->name('reportes.incidencias');
         Route::get('/reportes/usuarios', [ReporteUsuariosController::class, 'index'])->name('reportes.usuarios');
+
+        Route::get('/reportes/eficacia/pdf', [ReporteEficaciaController::class, 'downloadPDF']);
+        Route::get('/reportes/experiencias/pdf', [ReporteExperienciasController::class, 'downloadPDF']);
+        Route::get('/reportes/incidencias/pdf', [ReporteIncidenciasController::class, 'downloadPDF']);
+        Route::get('/reportes/recursos/pdf', [ReporteRecursosController::class, 'downloadPDF']);
+        Route::get('/reportes/solicitudes/pdf', [ReporteSolicitudesController::class, 'downloadPDF']);
+        Route::get('/reportes/usuarios/pdf', [ReporteUsuariosController::class, 'downloadPDF']);
+
+        Route::get('/reportes/eficacia/excel', [ReporteEficaciaController::class, 'downloadExcel']);
+        Route::get('/reportes/experiencias/excel', [ReporteExperienciasController::class, 'downloadExcel']);
+        Route::get('/reportes/incidencias/excel', [ReporteIncidenciasController::class, 'downloadExcel']);
+        Route::get('/reportes/recursos/excel', [ReporteRecursosController::class, 'downloadExcel']);
+        Route::get('/reportes/solicitudes/excel', [ReporteSolicitudesController::class, 'downloadExcel']);
+        Route::get('/reportes/usuarios/excel', [ReporteUsuariosController::class, 'downloadExcel']);
     });
 });

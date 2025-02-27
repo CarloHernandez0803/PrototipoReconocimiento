@@ -14,14 +14,6 @@ class EnviarNotificacionUsuarioCreado
 
     public function handle(UsuarioCreado $event)
     {
-        \Log::info('Evento UsuarioCreado disparado', ['usuario' => $event->usuario->id_usuario]);
-
-        if ($event->usuario) {
-            \Log::info('Usuario no es nulo', ['usuario' => $event->usuario]);
-            $event->usuario->notify(new UsuarioCreadoNotification($event->usuario));
-            \Log::info('Notificación enviada');
-        } else {
-            \Log::error('Usuario es nulo');
-        }
+        $event->usuario->notify(new UsuarioCreadoNotification($event->usuario));
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Incidencia;
 use App\Models\Resolucion;
-
+use App\Events\SeguimientoFalloActualizado;
 use Illuminate\Http\Request;
 
 class ResolucionController extends Controller
@@ -49,6 +49,8 @@ class ResolucionController extends Controller
             'estado' => $validated['estado'],
             'fecha_resolucion' => now(),
         ]);
+
+        event(new SeguimientoFalloActualizado($resolucion));
 
         return redirect()->route('incidencias.show', $resolucion->incidencia)->with('success', 'Resolución actualizada exitosamente');
     }

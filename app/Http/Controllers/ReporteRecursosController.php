@@ -38,4 +38,18 @@ class ReporteRecursosController extends Controller
             'datasets' => $datasets,
         ]);
     }
+
+    public function downloadPDF(Request $request)
+    {
+        $data = $this->index($request)->getData();
+
+        $pdf = Pdf::loadView('reportes.recursos', compact('data'));
+        return $pdf->download('reporte_recursos.pdf');
+    }
+
+    public function downloadExcel(Request $request)
+    {
+        $data = $this->index($request)->getData();
+        return Excel::download(new RecursoExport($data), 'reporte_recursos.xlsx');
+    }
 }
