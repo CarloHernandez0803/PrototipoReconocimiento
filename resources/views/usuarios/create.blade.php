@@ -10,24 +10,36 @@
             <form method="post" action="{{ route('usuarios.store') }}" class="p-6">
                 @csrf
 
-                <div>
+                <div class="mt-4">
                     <x-label for="nombre" value="{{ __('Nombre') }}" />
                     <x-input id="nombre" class="block mt-1 w-full" type="text" name="nombre" :value="old('nombre')" required autofocus />
+                    @error('nombre')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
                     <x-label for="apellidos" value="{{ __('Apellidos') }}" />
                     <x-input id="apellidos" class="block mt-1 w-full" type="text" name="apellidos" :value="old('apellidos')" required />
+                    @error('apellidos')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
                     <x-label for="correo" value="{{ __('Correo') }}" />
                     <x-input id="correo" class="block mt-1 w-full" type="email" name="correo" :value="old('correo')" required />
+                    @error('correo')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
                     <x-label for="password" value="{{ __('Contraseña') }}" />
                     <x-input id="password" class="block mt-1 w-full" type="password" name="password" required />
+                    @error('password')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
@@ -42,6 +54,9 @@
                         <option value="Coordinador">{{ __('Coordinador') }}</option>
                         <option value="Alumno">{{ __('Alumno') }}</option>
                     </select>
+                    @error('rol')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="flex items-center justify-end mt-4">

@@ -4,8 +4,10 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SolicitudExport implements FromArray, WithHeadings
+class SolicitudExport implements FromArray, WithHeadings, WithStyles
 {
     protected $data;
 
@@ -16,11 +18,25 @@ class SolicitudExport implements FromArray, WithHeadings
 
     public function array(): array
     {
-        return $this->data['datasets'];
+        $datasets = [];
+        foreach ($this->data['labels'] as $index => $label) {
+            $datasets[] = [
+                $label,
+                $this->data['datasets'][0]['data'][$index],
+            ];
+        }
+        return $datasets;
     }
 
     public function headings(): array
     {
         return ['Estado', 'Total'];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1 => ['font' => ['bold' => true]],
+        ];
     }
 }

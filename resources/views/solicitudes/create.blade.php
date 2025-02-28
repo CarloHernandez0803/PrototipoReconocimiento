@@ -13,6 +13,9 @@
                 <div class="mt-4">
                     <x-label for="fecha_solicitud" value="{{ __('Fecha de Solicitud') }}" />
                     <x-input id="fecha_solicitud" class="block mt-1 w-full" type="date" name="fecha_solicitud" :value="old('fecha_solicitud')" required />
+                    @error('fecha_solicitud')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
@@ -23,6 +26,9 @@
                             <option value="{{ $alumno->id_usuario }}">{{ $alumno->nombre . ' ' . $alumno->apellidos }}</option>
                         @endforeach
                     </select>
+                    @error('alumno')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="flex items-center justify-end mt-4">

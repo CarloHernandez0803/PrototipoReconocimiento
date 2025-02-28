@@ -28,60 +28,56 @@
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Eficacia del Modelo de Reconocimiento</h2>
                             <div class="flex space-x-2">
-                                <a href="/reportes/eficacia/pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    PDF
-                                </a>
                                 <a href="/reportes/eficacia/excel" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Excel
+                                    Descargar archivo Excel
                                 </a>
                             </div>
                         </div>
-                        <canvas id="eficaciaChart"></canvas>
+                        <div style="height: 400px;">
+                            <canvas id="eficaciaChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Gestión de Solicitudes de Pruebas</h2>
                             <div class="flex space-x-2">
-                                <a href="/reportes/solicitudes/pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    PDF
-                                </a>
                                 <a href="/reportes/solicitudes/excel" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Excel
+                                    Descargar archivo Excel
                                 </a>
                             </div>
                         </div>
-                        <canvas id="solicitudesChart"></canvas>
+                        <div style="height: 400px;">
+                            <canvas id="solicitudesChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Análisis de Experiencias de Usuarios</h2>
                             <div class="flex space-x-2">
-                                <a href="/reportes/experiencias/pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    PDF
-                                </a>
                                 <a href="/reportes/experiencias/excel" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Excel
+                                    Descargar archivo Excel
                                 </a>
                             </div>
                         </div>
-                        <canvas id="experienciasChart"></canvas>
+                        <div style="height: 400px;">
+                            <canvas id="experienciasChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Uso de Recursos de Entrenamiento</h2>
                             <div class="flex space-x-2">
-                                <a href="/reportes/recursos/pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    PDF
-                                </a>
                                 <a href="/reportes/recursos/excel" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Excel
+                                    Descargar archivo Excel
                                 </a>
                             </div>
                         </div>
-                        <canvas id="recursosChart"></canvas>
+                        <div style="height: 400px;">
+                            <canvas id="recursosChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -99,10 +95,7 @@
                             <h2 class="text-xl font-bold">Resumen de Incidencias</h2>
                             <div class="flex space-x-2">
                                 <a href="/reportes/incidencias/pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    PDF
-                                </a>
-                                <a href="/reportes/incidencias/excel" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Excel
+                                    Descargar archivo PDF
                                 </a>
                             </div>
                         </div>
@@ -149,10 +142,7 @@
                             <h2 class="text-xl font-bold">Resumen de Actividad de Usuarios</h2>
                             <div class="flex space-x-2">
                                 <a href="/reportes/usuarios/pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    PDF
-                                </a>
-                                <a href="/reportes/usuarios/excel" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Excel
+                                    Descargar archivo PDF
                                 </a>
                             </div>
                         </div>
@@ -206,7 +196,11 @@
                 charts[chartId] = new Chart(ctx, {
                     type: type,
                     data: data,
-                    options: options
+                    options: {
+                        ...options,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                    }
                 });
             } catch (error) {
                 console.error(`Error loading chart ${chartId}:`, error);
@@ -226,7 +220,6 @@
                 const incidenciasData = await incidenciasResponse.json();
                 const usuariosData = await usuariosResponse.json();
 
-                // Actualizar resumen de incidencias
                 const totalIncidencias = document.getElementById("totalIncidencias");
                 const incidenciasResueltas = document.getElementById("incidenciasResueltas");
                 const porcentajeResueltas = document.getElementById("porcentajeResueltas");
@@ -239,7 +232,6 @@
                     tiempoPromedioIncidencias.textContent = `${incidenciasData.resumen.tiempo_promedio_resolucion || 0}h`;
                 }
 
-                // Actualizar tabla de incidencias
                 const incidenciasTableBody = document.getElementById("incidenciasTableBody");
                 if (incidenciasTableBody && incidenciasData.detalle_incidencias) {
                     incidenciasTableBody.innerHTML = incidenciasData.detalle_incidencias.map(item => {
@@ -261,7 +253,6 @@
                     incidenciasTableBody.innerHTML = '<tr><td colspan="5" class="py-2 px-4 border-b">No hay datos disponibles</td></tr>';
                 }
 
-                // Actualizar resumen de usuarios
                 const totalActividades = document.getElementById("totalActividades");
                 const tiempoPromedioUsuarios = document.getElementById("tiempoPromedioUsuarios");
 
@@ -270,7 +261,6 @@
                     tiempoPromedioUsuarios.textContent = `${usuariosData.resumen.tiempo_promedio_aprobacion || 0}h`;
                 }
 
-                // Actualizar tabla de usuarios
                 const usuariosTableBody = document.getElementById("usuariosTableBody");
                 if (usuariosTableBody && usuariosData.detalle_usuarios) {
                     usuariosTableBody.innerHTML = usuariosData.detalle_usuarios.map(item => {
@@ -315,7 +305,9 @@
                 },
             });
 
-            fetchData("{{ route('reportes.solicitudes') }}", 'solicitudesChart', 'doughnut');
+            fetchData("{{ route('reportes.solicitudes') }}", 'solicitudesChart', 'doughnut', {
+                // Opciones específicas para la gráfica de solicitudes
+            });
 
             fetchData("{{ route('reportes.experiencias') }}", 'experienciasChart', 'bar', {
                 scales: {
@@ -349,7 +341,9 @@
                 },
             });
 
-            fetchData(`/reportes/solicitudes?start_date=${startDate}&end_date=${endDate}`, 'solicitudesChart', 'doughnut');
+            fetchData(`/reportes/solicitudes?start_date=${startDate}&end_date=${endDate}`, 'solicitudesChart', 'doughnut', {
+                // Opciones específicas para la gráfica de solicitudes
+            });
 
             fetchData(`/reportes/experiencias?start_date=${startDate}&end_date=${endDate}`, 'experienciasChart', 'bar', {
                 scales: {

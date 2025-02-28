@@ -8,8 +8,6 @@ use App\Models\ResolucionIncidencia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Exports\IncidenciaExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteIncidenciasController extends Controller
 {
@@ -86,11 +84,5 @@ class ReporteIncidenciasController extends Controller
 
         $pdf = Pdf::loadView('reportes.incidencias', compact('data'));
         return $pdf->download('reporte_incidencias.pdf');
-    }
-
-    public function downloadExcel(Request $request)
-    {
-        $data = $this->index($request)->getData();
-        return Excel::download(new IncidenciaExport($data), 'reporte_incidencias.xlsx');
     }
 }

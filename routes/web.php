@@ -67,18 +67,11 @@ Route::middleware(['web'])->group(function () {
         Route::get('/reportes/incidencias', [ReporteIncidenciasController::class, 'index'])->name('reportes.incidencias');
         Route::get('/reportes/usuarios', [ReporteUsuariosController::class, 'index'])->name('reportes.usuarios');
 
-        Route::get('/reportes/eficacia/pdf', [ReporteEficaciaController::class, 'downloadPDF']);
-        Route::get('/reportes/experiencias/pdf', [ReporteExperienciasController::class, 'downloadPDF']);
         Route::get('/reportes/incidencias/pdf', [ReporteIncidenciasController::class, 'downloadPDF']);
-        Route::get('/reportes/recursos/pdf', [ReporteRecursosController::class, 'downloadPDF']);
-        Route::get('/reportes/solicitudes/pdf', [ReporteSolicitudesController::class, 'downloadPDF']);
         Route::get('/reportes/usuarios/pdf', [ReporteUsuariosController::class, 'downloadPDF']);
-
         Route::get('/reportes/eficacia/excel', [ReporteEficaciaController::class, 'downloadExcel']);
         Route::get('/reportes/experiencias/excel', [ReporteExperienciasController::class, 'downloadExcel']);
-        Route::get('/reportes/incidencias/excel', [ReporteIncidenciasController::class, 'downloadExcel']);
         Route::get('/reportes/recursos/excel', [ReporteRecursosController::class, 'downloadExcel']);
         Route::get('/reportes/solicitudes/excel', [ReporteSolicitudesController::class, 'downloadExcel']);
-        Route::get('/reportes/usuarios/excel', [ReporteUsuariosController::class, 'downloadExcel']);
     });
 });

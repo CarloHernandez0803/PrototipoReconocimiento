@@ -13,11 +13,17 @@
                 <div class="mt-4">
                     <x-label for="nombre_lote" value="{{ __('Nombre del Lote') }}" />
                     <x-input id="nombre_lote" name="nombre_lote" type="text" class="block mt-1 w-full" value="{{ old('nombre_lote') }}" required />
+                    @error('nombre_lote')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
                     <x-label for="descripcion" value="{{ __('Descripción') }}" />
                     <textarea id="descripcion" name="descripcion" rows="3" class="block mt-1 w-full rounded-md shadow-sm">{{ old('descripcion') }}</textarea>
+                    @error('descripcion')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
@@ -34,6 +40,9 @@
                 <div class="mt-4">
                     <x-label for="imagenes" value="{{ __('Imágenes') }}" />
                     <input type="file" id="imagenes" name="imagenes[]" class="block mt-1 w-full" multiple required />
+                    @error('imagenes')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="flex items-center justify-end mt-4">

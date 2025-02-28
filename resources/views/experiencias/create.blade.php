@@ -22,6 +22,9 @@
                 <div class="mt-4">
                     <x-label for="descripcion" value="{{ __('Descripción') }}" />
                     <x-input id="descripcion" class="block mt-1 w-full" type="text" name="descripcion" :value="old('descripcion')" required/>
+                    @error('descripcion')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">

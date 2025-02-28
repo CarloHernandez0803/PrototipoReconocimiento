@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Exports\UsuarioExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteUsuariosController extends Controller
 {
@@ -86,11 +84,5 @@ class ReporteUsuariosController extends Controller
 
         $pdf = Pdf::loadView('reportes.usuarios', compact('data'));
         return $pdf->download('reporte_usuarios.pdf');
-    }
-
-    public function downloadExcel(Request $request)
-    {
-        $data = $this->index($request)->getData();
-        return Excel::download(new UsuarioExport($data), 'reporte_usuarios.xlsx');
     }
 }
