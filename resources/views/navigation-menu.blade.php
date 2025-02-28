@@ -19,7 +19,6 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <!-- Usuarios -->
                             @if(Auth::user()->rol === 'Administrador')
                                 <x-dropdown-link href="{{ route('usuarios.index') }}">
                                     {{ __('Usuarios') }}
@@ -87,12 +86,12 @@
 
                         <x-slot name="content">
                             <!-- Red neuronal - Entrenamiento -->
-                            <x-dropdown-link>
+                            <x-dropdown-link href="{{ route('hyperparameters.index') }}">
                                 {{ __('Entrenamiento') }}
                             </x-dropdown-link>
 
                             <!-- Red neuronal - Prueba -->
-                            <x-dropdown-link>
+                            <x-dropdown-link href="{{ route('modulo_prueba.index') }}">
                                 {{ __('Prueba') }}
                             </x-dropdown-link>
                         </x-slot>

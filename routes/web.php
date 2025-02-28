@@ -22,6 +22,8 @@ use App\Http\Controllers\ReporteExperienciasController;
 use App\Http\Controllers\ReporteRecursosController;
 use App\Http\Controllers\ReporteIncidenciasController;
 use App\Http\Controllers\ReporteUsuariosController;
+use App\Http\Controllers\HyperparameterController;
+use App\Http\Controllers\ModuloPrueba;
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
@@ -73,5 +75,10 @@ Route::middleware(['web'])->group(function () {
         Route::get('/reportes/experiencias/excel', [ReporteExperienciasController::class, 'downloadExcel']);
         Route::get('/reportes/recursos/excel', [ReporteRecursosController::class, 'downloadExcel']);
         Route::get('/reportes/solicitudes/excel', [ReporteSolicitudesController::class, 'downloadExcel']);
+        Route::get('/hyperparameters', [HyperparameterController::class, 'index'])->name('hyperparameters.index');
+        Route::post('/hyperparameters/train', [HyperparameterController::class, 'train'])->name('hyperparameters.train');
+        Route::get('/hyperparameters/details/{id}', [HyperparameterController::class, 'details'])->name('hyperparameters.details');
+        Route::get('/modulo_prueba', [ModuloPrueba::class, 'index'])->name('modulo_prueba.index');
+        Route::get('/modulo_prueba/classify/{image}', [ModuloPrueba::class, 'classify'])->name('modulo_prueba.classify');
     });
 });
