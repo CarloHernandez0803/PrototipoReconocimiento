@@ -10,18 +10,18 @@ class SenPruebaController extends Controller
 {
     public function index()
     {
-        $senalamientos = SenPrueba::paginate(10); //Extrae todos los lotes registrados con paginación
-        return view('senalamientos_pruebas.index', compact('senalamientos')); //Muestra la vista de los lotes
+        $senalamientos = SenPrueba::paginate(10);
+        return view('senalamientos_pruebas.index', compact('senalamientos'));
     }
 
     public function create()
     {
-        return view('senalamientos_pruebas.create'); //Muestra la vista para crear un lote
+        return view('senalamientos_pruebas.create');
     }
 
     public function store(Request $request)
     {
-        $request->validate([ //Validaciones de los campos del formulario
+        $request->validate([
             'nombre_lote' => 'required|string|max:45',
             'descripcion' => 'required|string',
             'categoria' => 'required|in:Semáforo,Restrictiva,Advertencia,Tráfico,Informativa',
@@ -29,14 +29,19 @@ class SenPruebaController extends Controller
             'imagenes.*' => 'image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        /* Guardar las imágenes */
-        $rutas = []; //Generar un array para almacenar las rutas de las imagenes
-        foreach ($request->file('imagenes') as $imagen) { //Recorrer todas las imagenes
-            $ruta = Storage::disk('ftp')->putFile("pruebas/{$request->categoria}", $imagen); //Guardar las imagenes en la carpeta correspondiente
-            $rutas[] = $ruta; //Almacenar las rutas de las imagenes en el array
+        $rutas = [];
+        foreach ($request->file('imagenes') as $imagen) {
+            $nombreOriginal = $imagen->getClientOriginalName();
+            $rutaRelativa = "datasets/pruebas/{$request->categoria}/{$nombreOriginal}";
+            
+            Storage::disk('ftp')->put($rutaRelativa, file_get_contents($imagen));
+            
+            $rutas[] = [
+                'ruta_relativa' => $rutaRelativa,
+                'url_publica' => env('FTP_BASE_URL').'/'.$rutaRelativa
+            ];
         }
 
-        /* Crear el lote */
         SenPrueba::create([
             'nombre_lote' => $request->nombre_lote,
             'descripcion' => $request->descripcion,
@@ -44,74 +49,118 @@ class SenPruebaController extends Controller
             'rutas' => json_encode($rutas)
         ]);
 
-        return redirect()->route('senalamientos_pruebas.index')->with('success', 'Señalamiento creado exitosamente.'); //Redireccionar a la vista de lotes
+        return redirect()->route('senalamientos_pruebas.index')->with('success', 'Lote subido correctamente');
     }
 
     public function show(string $id)
     {
-        $senalamiento = SenPrueba::findOrFail($id); //Busca el lote por su id
-        $senalamiento->rutas = json_decode($senalamiento->rutas); //Decodifica las rutas
-
-        $imagenes = array_map(function ($ruta) {
-            return Storage::disk('ftp')->url($ruta);
-        }, $senalamiento->rutas);
-
-        return view('senalamientos_pruebas.show', compact('senalamiento')); //Muestra la vista del lote
+        $lote = SenPrueba::findOrFail($id);
+        return view('senalamientos_pruebas.show', [
+            'lote' => $lote,
+            'imagenes' => $lote->rutas
+        ]);
     }
 
     public function edit(string $id)
     {
-        $senalamiento = SenPrueba::findOrFail($id); //Busca el lote por su id
-        $senalamiento->rutas = json_decode($senalamiento->rutas); //Decodifica las rutas
-        return view('senalamientos_pruebas.edit', compact('senalamiento')); //Muestra la vista para editar el lote
+        $lote = SenPrueba::findOrFail($id);
+        return view('senalamientos_pruebas.edit', [
+            'lote' => $lote,
+            'imagenes' => $lote->rutas
+        ]);
     }
 
     public function update(Request $request, string $id)
     {
-        /* Validaciones */
-        $request->validate([
+        $validated = $request->validate([
             'nombre_lote' => 'required|string|max:45',
             'descripcion' => 'required|string',
             'categoria' => 'required|in:Semáforo,Restrictiva,Advertencia,Tráfico,Informativa',
-            'imagenes.*' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048'
+            'imagenes.*' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+            'eliminar_imagenes' => 'sometimes|array',
+            'eliminar_imagenes.*' => 'integer'
         ]);
 
-        $senalamiento = SenPrueba::findOrFail($id); //Busca el lote por su id
-        $datos = $request->only(['nombre_lote', 'descripcion', 'categoria']); //Obtiene los datos del formulario
+        $lote = SenPrueba::findOrFail($id);
+        $rutas = $lote->rutas; // Usamos el accessor que definimos
 
-        if ($request->hasFile('imagenes')) {// Si hay nuevas imágenes
-            /* Eliminar imágenes anteriores */
-            $rutasAnteriores = json_decode($senalamiento->rutas, true); //Obtiene las rutas anteriores
-            foreach ($rutasAnteriores as $ruta) { //Recorre las rutas anteriores
-                Storage::disk('ftp')->delete($ruta); //Elimina las rutas anteriores
+        // Eliminar imágenes seleccionadas
+        if ($request->has('eliminar_imagenes')) {
+            foreach ($request->eliminar_imagenes as $index) {
+                if (isset($rutas[$index])) {
+                    Storage::disk('ftp')->delete($rutas[$index]['ruta_relativa']);
+                    unset($rutas[$index]);
+                }
             }
-
-            /* Guardar nuevas imágenes */
-            $nuevasRutas = [];  //Generar un array para almacenar las rutas de las imagenes
-            foreach ($request->file('imagenes') as $imagen) { //Recorrer todas las imagenes
-                $ruta = Storage::disk('ftp')->putFile("pruebas/{$request->categoria}", $imagen); //Guardar las imagenes en la carpeta correspondiente
-                $nuevasRutas[] = $ruta; //Almacenar las rutas de las imagenes en el array
-            }
-            $datos['rutas'] = json_encode($nuevasRutas); //Almacenar las rutas de las imagenes
+            $rutas = array_values($rutas); // Reindexar
         }
 
-        $senalamiento->update($datos); //Actualiza el lote
+        // Agregar nuevas imágenes
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $nombreOriginal = $imagen->getClientOriginalName();
+                $rutaRelativa = "datasets/pruebas/{$validated['categoria']}/{$nombreOriginal}";
+                
+                Storage::disk('ftp')->put($rutaRelativa, file_get_contents($imagen));
+                
+                $rutas[] = [
+                    'ruta_relativa' => $rutaRelativa,
+                    'url_publica' => rtrim(env('FTP_BASE_URL'), '/').'/'.ltrim($rutaRelativa, '/').'?'.time() // Cache buster
+                ];
+            }
+        }
 
-        return redirect()->route('senalamientos_pruebas.index')->with('success', 'Señalamiento actualizado exitosamente.'); //Redireccionar a la vista de lotes
+        $lote->update([
+            'nombre_lote' => $validated['nombre_lote'],
+            'descripcion' => $validated['descripcion'],
+            'categoria' => $validated['categoria'],
+            'rutas' => json_encode($rutas)
+        ]);
+
+        return redirect()->route('senalamientos_pruebas.index')->with('success', 'Lote actualizado correctamente');
     }
 
     public function destroy(string $id)
     {
-        $senalamiento = SenPrueba::findOrFail($id); //Busca el lote por su id
+        $lote = SenPrueba::findOrFail($id);
+        
+        $rutas = $lote->rutas;
 
-        /* Eliminar imágenes */
-        $rutas = json_decode($senalamiento->rutas, true); //Obtiene las rutas
-        foreach ($rutas as $ruta) { //Recorre las rutas
-            Storage::disk('ftp')->delete($ruta); //Elimina las rutas anteriores del lote 
+        foreach ($rutas as $ruta) {
+            if (!empty($ruta['ruta_relativa'])) {
+                try {
+                    Storage::disk('ftp')->delete($ruta['ruta_relativa']);
+                } catch (\Exception $e) {
+                    \Log::error("Error eliminando archivo FTP: {$ruta['ruta_relativa']} - {$e->getMessage()}");
+                }
+            }
         }
 
-        $senalamiento->delete(); //Elimina el lote
+        $lote->delete();
 
-        return redirect()->route('senalamientos_pruebas.index')->with('success', 'Señalamiento eliminado exitosamente.'); //Redireccionar a la vista de lotes
+        return redirect()->route('senalamientos_pruebas.index')->with('success', 'Lote eliminado correctamente');
+    }
+
+    public function mostrarImagen($id, $index)
+    {
+        $lote = SenPrueba::findOrFail($id);
+        $rutas = $lote->rutas;
+
+        if (!isset($rutas[$index])) {
+            abort(404);
+        }
+
+        $ruta = $rutas[$index]['ruta_relativa'] ?? $rutas[$index];
+
+        try {
+            $archivo = Storage::disk('ftp')->get($ruta);
+            $tipo = Storage::disk('ftp')->mimeType($ruta);
+
+            return response($archivo)
+                ->header('Content-Type', $tipo)
+                ->header('Content-Disposition', 'inline; filename="'.basename($ruta).'"');
+        } catch (\Exception $e) {
+            return response()->file(public_path('images/placeholder.png'));
+        }
     }
 }

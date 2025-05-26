@@ -71,19 +71,19 @@
         @stack('modals')
         @livewireScripts
 
-        <script>
-            document.addEventListener('livewire:load', function () {
-                console.log('Alpine.js inicializado correctamente');
-                Alpine.start();
-            });
+        <!-- Alpine.js debe cargarse solo una vez, después de Livewire -->
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js" defer></script>
 
+        <script>
+            // Eliminar el listener de livewire:load ya que Alpine se carga con defer
             document.addEventListener('DOMContentLoaded', function () {
+                // Eliminar notificaciones después de 5 segundos
                 setTimeout(function () {
                     const notifications = document.querySelectorAll('[role="alert"]');
                     notifications.forEach(notification => {
                         notification.remove();
                     });
-                }, 5000); // 5000 milisegundos = 5 segundos
+                }, 5000);
             });
         </script>
     </body>

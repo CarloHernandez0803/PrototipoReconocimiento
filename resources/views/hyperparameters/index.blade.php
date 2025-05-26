@@ -15,7 +15,7 @@
                         </h3>
                     </div>
                     <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-                        <form method="POST" action="{{ route('hyperparameters.train') }}" class="p-6">
+                        <form method="POST" action="{{ route('hyperparameters.store') }}" class="p-6">
                         @csrf
 
                         <div class="mb-6">

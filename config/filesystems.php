@@ -17,8 +17,11 @@ return [
             'host' => env('FTP_HOST'),
             'username' => env('FTP_USERNAME'),
             'password' => env('FTP_PASSWORD'),
-            'visibility' => 'public',
-            'url' => env('FTP_BASE_URL')
+            'port' => (int) env('FTP_PORT', 21),
+            'root' => env('FTP_ROOT', ''),
+            'passive' => true,
+            'ssl' => false,
+            'timeout' => 30,
         ],
 
         'public' => [

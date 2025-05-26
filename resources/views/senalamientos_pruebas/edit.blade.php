@@ -1,76 +1,101 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Editar Lote de Señalamientos para Pruebas
+            {{ __('Editar Lote de Señalamientos para Prueba') }}
         </h2>
     </x-slot>
 
-    <div>
-        <div class="max-w-4xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="mt-5 md:mt-0 md:col-span-2">
-                <form method="post" action="{{ route('senalamientos_pruebas.update', $senalamiento->id_senalamiento_prueba) }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('put')
-                    <div class="shadow overflow-hidden sm:rounded-md">
-                        <div class="px-4 py-5 bg-white sm:p-6">
-                            <label for="nombre_lote" class="block font-medium text-sm text-gray-700">{{ __('Nombre del lote') }}</label>
-                            <input type="text" name="nombre_lote" id="nombre_lote" value="{{ old('nombre_lote', $senalamiento->nombre_lote) }}" class="form-input rounded-md shadow-sm mt-1 block w-full" />
-                            @error('nombre_lote')
-                                <p class="text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="px-4 py-5 bg-white sm:p-6">
-                            <label for="descripcion" class="block font-medium text-sm text-gray-700">{{ __('Descripción') }}</label>
-                            <textarea name="descripcion" id="descripcion" class="form-input rounded-md shadow-sm mt-1 block w-full">{{ old('descripcion', $senalamiento->descripcion) }}</textarea>
-                            @error('descripcion')
-                                <p class="text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    
-                        <div class="px-4 py-5 bg-white sm:p-6">
-                            <label for="categoria" class="block font-medium text-sm text-gray-700">{{ __('Categoría') }}</label>
-                            <select name="categoria" id="categoria" class="form-select rounded-md shadow-sm mt-1 block w-full">
-                                <option value="Semáforo" {{ old('categoria', $senalamiento->categoria) == 'Semáforo' ? 'selected' : '' }}>{{ __('Semáforo') }}</option>
-                                <option value="Restrictiva" {{ old('categoria', $senalamiento->categoria) == 'Restrictiva' ? 'selected' : '' }}>{{ __('Restrictiva') }}</option>
-                                <option value="Advertencia" {{ old('categoria', $senalamiento->categoria) == 'Advertencia' ? 'selected' : '' }}>{{ __('Advertencia') }}</option>
-                                <option value="Tráfico" {{ old('categoria', $senalamiento->categoria) == 'Tráfico' ? 'selected' : '' }}>{{ __('Tráfico') }}</option>
-                                <option value="Informativa" {{ old('categoria', $senalamiento->categoria) == 'Informativa' ? 'selected' : '' }}>{{ __('Informativa') }}</option>
-                            </select>
-                            @error('categoria')
-                                <p class="text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="px-4 py-5 bg-white sm:p-6">
-                            <label for="imagenes" class="block font-medium text-sm text-gray-700">{{ __('Actualizar imágenes') }}</label>
-                            <input type="file" name="imagenes[]" id="imagenes" multiple class="form-input rounded-md shadow-sm mt-1 block w-full" />
-                            <small class="text-gray-600">{{ __('Puedes subir múltiples imágenes (máx. 2 MB por archivo).') }}</small>
-                            @error('imagenes')
-                                <p class="text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                            @error('imagenes.*')
-                                <p class="text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="px-4 py-5 bg-white sm:p-6">
-                            <label class="block font-medium text-sm text-gray-700">{{ __('Imágenes actuales') }}</label>
-                            <div class="grid grid-cols-3 gap-4">
-                                @foreach (json_decode($senalamiento->rutas) as $ruta)
-                                    <img src="{{ Storage::disk('ftp')->url($ruta) }}" alt="Imagen del señalamiento" class="h-32 w-32 object-cover">
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-end px-4 py-3 bg-gray-50 text-right sm:px-6">
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-purple-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
-                                {{ __('Actualizar') }}
-                            </button>
-                        </div>
+    <div class="max-w-4xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <form method="post" action="{{ route('senalamientos_pruebas.update', $lote->id_senalamiento_prueba) }}" enctype="multipart/form-data">
+                @csrf
+                @method('put')
+                
+                <div class="px-4 py-5 sm:p-6 space-y-6">
+                    <!-- Nombre del Lote -->
+                    <div>
+                        <x-label for="nombre_lote" value="{{ __('Nombre del lote*') }}" />
+                        <x-input id="nombre_lote" name="nombre_lote" type="text" class="mt-1 block w-full" 
+                                 value="{{ old('nombre_lote', $lote->nombre_lote) }}" required />
+                        <x-input-error for="nombre_lote" class="mt-2" />
                     </div>
-                </form>
-            </div>
+
+                    <!-- Descripción -->
+                    <div>
+                        <x-label for="descripcion" value="{{ __('Descripción*') }}" />
+                        <textarea id="descripcion" name="descripcion" rows="3"
+                                  class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('descripcion', $lote->descripcion) }}</textarea>
+                        <x-input-error for="descripcion" class="mt-2" />
+                    </div>
+
+                    <!-- Categoría -->
+                    <div>
+                        <x-label for="categoria" value="{{ __('Categoría*') }}" />
+                        <select id="categoria" name="categoria" required
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                            @foreach(['Semáforo', 'Restrictiva', 'Advertencia', 'Tráfico', 'Informativa'] as $opcion)
+                                <option value="{{ $opcion }}" {{ old('categoria', $lote->categoria) == $opcion ? 'selected' : '' }}>
+                                    {{ $opcion }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error for="categoria" class="mt-2" />
+                    </div>
+
+                    <!-- Imágenes Actuales -->
+                    <div>
+                        <x-label value="{{ __('Imágenes Actuales') }}" />
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                            @foreach($imagenes as $index => $ruta)
+                                <div class="relative group">
+                                    <div class="h-32 w-full bg-gray-100 rounded-md shadow-sm flex items-center justify-center overflow-hidden border">
+                                        <img src="{{ route('senalamientos.imagen', ['id' => $lote->id_senalamiento_prueba, 'index' => $index]) }}?v={{ time() }}" 
+                                            alt="Imagen {{ $index + 1 }}" 
+                                            class="max-h-full max-w-full object-contain"
+                                            onerror="this.onerror=null;this.src='{{ asset('images/image-not-found.png') }}'">
+                                    </div>
+                                    <div class="absolute top-1 right-1">
+                                        <input type="checkbox" 
+                                            name="eliminar_imagenes[]" 
+                                            value="{{ $index }}" 
+                                            id="eliminar_{{ $index }}"
+                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                    </div>
+                                    <label for="eliminar_{{ $index }}" class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-30 cursor-pointer">
+                                        <span class="bg-white text-red-600 px-2 py-1 rounded text-xs font-bold">Eliminar</span>
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">Marque las imágenes que desea eliminar</p>
+                    </div>
+
+                    <!-- Nuevas Imágenes -->
+                    <div>
+                        <x-label for="imagenes" value="{{ __('Agregar Nuevas Imágenes') }}" />
+                        <input type="file" name="imagenes[]" id="imagenes" multiple
+                               class="mt-1 block w-full text-sm text-gray-500
+                                      file:mr-4 file:py-2 file:px-4
+                                      file:rounded-md file:border-0
+                                      file:text-sm file:font-semibold
+                                      file:bg-indigo-50 file:text-indigo-700
+                                      hover:file:bg-indigo-100"
+                               accept=".jpg,.jpeg,.png">
+                        <x-input-error for="imagenes" class="mt-2" />
+                        <x-input-error for="imagenes.*" class="mt-2" />
+                        <p class="mt-1 text-sm text-gray-500">Formatos aceptados: JPG, JPEG, PNG (Máx. 2MB cada una)</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end px-4 py-3 bg-gray-50 text-right sm:px-6">
+                    <a href="{{ route('senalamientos_pruebas.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+                        {{ __('Cancelar') }}
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-purple-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 active:bg-purple-900 focus:outline-none focus:border-purple-900 focus:shadow-outline-purple disabled:opacity-25 transition ease-in-out duration-150">
+                        {{ __('Guardar Cambios') }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </x-app-layout>

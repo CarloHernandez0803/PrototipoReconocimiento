@@ -9,44 +9,52 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ModuloPrueba extends Controller
 {
-    /*public function index()
+    public function index()
     {
-        $imagePath = storage_path('app/public/images');
-        $images = array_diff(scandir($imagePath), ['.', '..']);
-
-        return view('modulo_prueba.index', compact('images'));
+        $categorias = ['Semáforo', 'Restrictiva', 'Advertencia', 'Tráfico', 'Informativa'];
+        $imagenes = [];
+        
+        if(request()->has('categoria')) {
+            $imagenes = Storage::disk('ftp')
+                ->files('datasets/pruebas/'.request('categoria'));
+        }
+        
+        return view('modulo_prueba.index', [
+            'categorias' => $categorias,
+            'imagenes' => $imagenes,
+            'resultado' => session('resultado'),
+            'selectedImage' => session('selectedImage')
+        ]);
     }
 
-    public function classify(Request $request, $image)
+    public function classify($image)
     {
-        // Ruta completa de la imagen seleccionada
-        $imagePath = storage_path('app/public/images/' . $image);
-
-        // Ejecutar el script de Python para clasificar la imagen
-        $process = new Process([
-            'python3',
-            base_path('scripts/clasificar.py'),
-            $imagePath,
-        ]);
-
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+        try {
+            $process = new Process([
+                config('app.python_path', 'python3'),
+                base_path('scripts/clasificar.py'),
+                $image
+            ]);
+            
+            $process->setTimeout(120);
+            $process->run();
+            
+            if (!$process->isSuccessful()) {
+                throw new ProcessFailedException($process);
+            }
+            
+            $resultado = json_decode($process->getOutput(), true);
+            
+            return back()
+                ->with('resultado', $resultado)
+                ->with('selectedImage', $image);
+                
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
+    }
 
-        // Obtener el resultado de la clasificación
-        $result = trim($process->getOutput());
-
-        // Devolver la vista con el resultado
-        return view('modulo_prueba.index', [
-            'result' => $result,
-            'selectedImage' => $image,
-            'images' => array_diff(scandir(storage_path('app/public/images')), ['.', '..']),
-        ]);
-    }*/
-
-    public function index()
+    /*public function index()
     {
         // Simular la lista de imágenes disponibles en el servidor
         $images = [
@@ -78,5 +86,5 @@ class ModuloPrueba extends Controller
             'selectedImage' => $selectedImage,
             'images' => $images,
         ]);
-    }
+    }*/
 }

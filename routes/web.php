@@ -41,14 +41,17 @@ Route::middleware(['web'])->group(function () {
         Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
 
         Route::resource('usuarios', UsuarioController::class);
-        Route::resource('senalamientos_entrenamientos', SenEntrenamientoController::class);
-        Route::resource('senalamientos_pruebas', SenPruebaController::class);
         Route::resource('solicitudes', SolicitudController::class);
         Route::resource('experiencias', ExperienciaController::class);
         Route::resource('incidencias', IncidenciaController::class);
         Route::get('/timeline', [IncidenciaController::class, 'timeline'])->name('incidencias.timeline');
         Route::resource('preguntas', PreguntaController::class);
         Route::resource('evaluaciones', EvaluacionController::class);
+
+        Route::resource('senalamientos_entrenamientos', SenEntrenamientoController::class);
+        Route::get('/senalamientos/entrenamiento/{id}/imagen/{index}', [SenEntrenamientoController::class, 'mostrarImagen'])->name('senalamientos.entrenamiento.imagen');
+        Route::resource('senalamientos_pruebas', SenPruebaController::class);
+        Route::get('/senalamientos/prueba/{id}/imagen/{index}', [SenPruebaController::class, 'mostrarImagen'])->name('senalamientos.prueba.imagen');
 
         Route::get('resoluciones/create/{id}', [ResolucionController::class, 'create'])->name('resoluciones.create');
         Route::post('resoluciones/store/{id}', [ResolucionController::class, 'store'])->name('resoluciones.store');
@@ -75,9 +78,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('/reportes/experiencias/excel', [ReporteExperienciasController::class, 'downloadExcel']);
         Route::get('/reportes/recursos/excel', [ReporteRecursosController::class, 'downloadExcel']);
         Route::get('/reportes/solicitudes/excel', [ReporteSolicitudesController::class, 'downloadExcel']);
-        Route::get('/hyperparameters', [HyperparameterController::class, 'index'])->name('hyperparameters.index');
-        Route::post('/hyperparameters/train', [HyperparameterController::class, 'train'])->name('hyperparameters.train');
-        Route::get('/hyperparameters/details/{id}', [HyperparameterController::class, 'details'])->name('hyperparameters.details');
+        Route::resource('hyperparameters', HyperparameterController::class)->only(['index', 'create', 'store', 'show']);
         Route::get('/modulo_prueba', [ModuloPrueba::class, 'index'])->name('modulo_prueba.index');
         Route::get('/modulo_prueba/classify/{image}', [ModuloPrueba::class, 'classify'])->name('modulo_prueba.classify');
     });

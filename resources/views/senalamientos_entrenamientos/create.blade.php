@@ -1,53 +1,69 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Crear Lote de Señalamientos para Entrenamiento
+            {{ __('Crear Lote de Entrenamiento') }}
         </h2>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto py-10 sm:px-6 lg:px-8">
-        <div class="bg-white shadow overflow-hidden sm:rounded-md">
-            <form method="post" action="{{ route('senalamientos_entrenamientos.store') }}" class="p-6">
+    <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <form method="POST" action="{{ route('senalamientos_entrenamientos.store') }}" enctype="multipart/form-data" class="p-6 space-y-6">
                 @csrf
 
-                <div class="mt-4">
-                    <x-label for="nombre_lote" value="{{ __('Nombre del Lote') }}" />
-                    <x-input id="nombre_lote" name="nombre_lote" type="text" class="block mt-1 w-full" value="{{ old('nombre_lote') }}" required />
-                    @error('nombre_lote')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
+                <!-- Nombre del Lote -->
+                <div>
+                    <x-label for="nombre_lote" value="{{ __('Nombre del Lote*') }}" />
+                    <x-input id="nombre_lote" name="nombre_lote" type="text" class="mt-1 block w-full" 
+                             value="{{ old('nombre_lote') }}" required autofocus />
+                    <x-input-error for="nombre_lote" class="mt-2" />
                 </div>
 
-                <div class="mt-4">
-                    <x-label for="descripcion" value="{{ __('Descripción') }}" />
-                    <textarea id="descripcion" name="descripcion" rows="3" class="block mt-1 w-full rounded-md shadow-sm">{{ old('descripcion') }}</textarea>
-                    @error('descripcion')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
+                <!-- Descripción -->
+                <div>
+                    <x-label for="descripcion" value="{{ __('Descripción*') }}" />
+                    <textarea id="descripcion" name="descripcion" rows="3"
+                              class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('descripcion') }}</textarea>
+                    <x-input-error for="descripcion" class="mt-2" />
                 </div>
 
-                <div class="mt-4">
-                    <x-label for="categoria" value="{{ __('Categoría') }}" />
-                    <select id="categoria" name="categoria" class="block mt-1 w-full rounded-md shadow-sm">
-                        <option value="Semáforo">{{ __('Semáforo') }}</option>
-                        <option value="Restrictiva">{{ __('Restrictiva') }}</option>
-                        <option value="Advertencia">{{ __('Advertencia') }}</option>
-                        <option value="Tráfico">{{ __('Tráfico') }}</option>
-                        <option value="Informativa">{{ __('Informativa') }}</option>
+                <!-- Categoría -->
+                <div>
+                    <x-label for="categoria" value="{{ __('Categoría*') }}" />
+                    <select id="categoria" name="categoria" required
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                        @foreach(['Semáforo', 'Restrictiva', 'Advertencia', 'Tráfico', 'Informativa'] as $categoria)
+                            <option value="{{ $categoria }}" {{ old('categoria') == $categoria ? 'selected' : '' }}>
+                                {{ $categoria }}
+                            </option>
+                        @endforeach
                     </select>
+                    <x-input-error for="categoria" class="mt-2" />
                 </div>
 
-                <div class="mt-4">
-                    <x-label for="imagenes" value="{{ __('Imágenes') }}" />
-                    <input type="file" id="imagenes" name="imagenes[]" class="block mt-1 w-full" multiple required />
-                    @error('imagenes')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
+                <!-- Subida de Imágenes -->
+                <div>
+                    <x-label for="imagenes" value="{{ __('Imágenes*') }}" />
+                    <div class="mt-1 flex items-center">
+                        <input type="file" id="imagenes" name="imagenes[]" multiple
+                               class="block w-full text-sm text-gray-500
+                                      file:mr-4 file:py-2 file:px-4
+                                      file:rounded-md file:border-0
+                                      file:text-sm file:font-semibold
+                                      file:bg-indigo-50 file:text-indigo-700
+                                      hover:file:bg-indigo-100"
+                               accept=".jpg,.jpeg,.png" required>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Formatos aceptados: JPG, JPEG, PNG (Máx. 2MB cada imagen)
+                    </p>
+                    <x-input-error for="imagenes" class="mt-2" />
+                    <x-input-error for="imagenes.*" class="mt-2" />
                 </div>
 
-                <div class="flex items-center justify-end mt-4">
-                    <x-button class="ms-4 bg-purple-900">
-                        {{ __('Registrar') }}
+                <!-- Botón de Submit -->
+                <div class="flex justify-end">
+                    <x-button type="submit" class="bg-indigo-600 hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900">
+                        {{ __('Guardar Lote') }}
                     </x-button>
                 </div>
             </form>
