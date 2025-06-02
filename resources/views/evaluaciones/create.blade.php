@@ -12,7 +12,7 @@
 
                 <div class="mt-4">
                     <x-label for="categoria" value="{{ __('Categoría de señales') }}" />
-                    <select id="categoria" name="categoria" class="block mt-1 w-full">
+                    <select id="categoria_senal" name="categoria_senal" class="block mt-1 w-full">
                         <option value="Advertencia">{{ __('Advertencia') }}</option>
                         <option value="Informativa">{{ __('Informativa') }}</option>
                         <option value="Restrictiva">{{ __('Restrictiva') }}</option>
@@ -22,29 +22,28 @@
                 </div>
 
                 <div class="mt-4">
-                    <x-label for="correctas" value="{{ __('Cantidad de señales correctas') }}" />
-                    <x-input id="correctas" class="block mt-1 w-full" type="number" name="correctas" :value="old('correctas')" required />
-                    @error('correctas')
+                    <x-label for="senales_correctas" value="{{ __('Cantidad de señales correctas') }}" />
+                    <x-input id="senales_correctas" class="block mt-1 w-full" type="number" name="senales_correctas" :value="old('senales_correctas')" required />
+                    @error('senales_correctas')
                         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="mt-4">
-                    <x-label for="totales" value="{{ __('Cantidad de señales totales') }}" />
-                    <x-input id="totales" class="block mt-1 w-full" type="number" name="totales" :value="old('totales')" required />
-                    @error('totales')
+                    <x-label for="senales_totales" value="{{ __('Cantidad de señales totales') }}" />
+                    <x-input id="senales_totales" class="block mt-1 w-full" type="number" name="senales_totales" :value="old('senales_totales')" required />
+                    @error('senales_totales')
                         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="mt-4">
                     <x-label for="calificacion_media" value="{{ __('Calificación media (1-5)') }}" />
-
                     <div class="flex items-center space-x-2 mt-2" id="rating-container">
                         @for ($i = 1; $i <= 5; $i++)
                             <label class="cursor-pointer">
-                                <input type="radio" name="calificacion_media" value="{{ $i }}" class="hidden peer" required />
-                                <svg class="w-8 h-8 text-gray-400 peer-checked:text-yellow-400 transition duration-200" fill="currentColor" viewBox="0 0 20 20">
+                                <input type="radio" name="calificacion_media" value="{{ $i }}" class="hidden" required />
+                                <svg class="w-8 h-8 star text-gray-400 transition duration-200" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M10 15l-5.878 3.09 1.122-6.54L0 6.909l6.56-.955L10 0l3.44 5.954 6.56.955-4.744 4.64 1.122 6.54z"/>
                                 </svg>
                             </label>
@@ -68,6 +67,28 @@
                         {{ __('Registrar') }}
                     </x-button>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const stars = document.querySelectorAll('#rating-container input[type="radio"]');
+
+                        stars.forEach((star, idx) => {
+                            star.addEventListener('change', () => {
+                                // Remover color de todas las estrellas
+                                document.querySelectorAll('#rating-container svg').forEach(svg => {
+                                    svg.classList.remove('text-yellow-400');
+                                    svg.classList.add('text-gray-400');
+                                });
+
+                                // Agregar color hasta la estrella seleccionada
+                                for (let i = 0; i <= idx; i++) {
+                                    document.querySelectorAll('#rating-container svg')[i].classList.remove('text-gray-400');
+                                    document.querySelectorAll('#rating-container svg')[i].classList.add('text-yellow-400');
+                                }
+                            });
+                        });
+                    });
+                </script>
             </form>
         </div>
     </div>

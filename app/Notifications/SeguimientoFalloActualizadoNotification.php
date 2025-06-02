@@ -4,13 +4,13 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\ResolucionIncidencias;
+use App\Models\Resolucion;
 
 class SeguimientoFalloActualizadoNotification extends Notification
 {
     protected $resolucion;
 
-    public function __construct(ResolucionIncidencias $resolucion)
+    public function __construct(Resolucion $resolucion)
     {
         $this->resolucion = $resolucion;
     }

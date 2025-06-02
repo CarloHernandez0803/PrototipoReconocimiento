@@ -7,12 +7,12 @@
 
     <div class="max-w-4xl mx-auto py-10 sm:px-6 lg:px-8">
         <div class="bg-white shadow overflow-hidden sm:rounded-md">
-            <form method="post" action="{{ route('evaluaciones.store') }}" class="p-6">
+            <form method="post" action="{{ route('incidencias.store') }}" class="p-6">
                 @csrf
 
                 <div class="mt-4">
                     <x-label for="tipo" value="{{ __('Tipo de incidencia') }}" />
-                    <select id="tipo" name="tipo" class="block mt-1 w-full">
+                    <select id="tipo_experiencia" name="tipo_experiencia" class="block mt-1 w-full">
                         <option value="Error de Sistema">{{ __('Error de Sistema') }}</option>
                         <option value="Problema de Rendimiento">{{ __('Problema de Rendimiento') }}</option>
                         <option value="Fallo de Seguridad">{{ __('Fallo de Seguridad') }}</option>

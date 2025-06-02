@@ -8,7 +8,7 @@
     <div>
         <div class="max-w-6xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="block mb-8">
-                <a href="{{ route('evaluaciones.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Pregunta</a>
+                <a href="{{ route('preguntas.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Pregunta</a>
             </div>
             <div class="flex flex-col">
                 <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -51,18 +51,24 @@
                                             </td>
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $pregunta->respuesta }}
+                                                {{ $pregunta->respuesta ? $pregunta->respuesta : __('Sin respuesta') }}
                                             </td>
 
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('preguntas.show', $pregunta->id_pregunta) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
-                                                <a href="{{ route('preguntas.edit', $pregunta->id_pregunta) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
-                                                <form class="inline-block" action="{{ route('preguntas.destroy', $pregunta->id_pregunta) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
-                                                </form>
-                                            </td>
+                                            @if(Auth::user()->id_usuario === $pregunta->usuario || Auth::user()->rol === 'Administrador')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <a href="{{ route('preguntas.show', $pregunta->id_pregunta) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
+                                                    <a href="{{ route('preguntas.edit', $pregunta->id_pregunta) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
+                                                    <form class="inline-block" action="{{ route('preguntas.destroy', $pregunta->id_pregunta) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
+                                                    </form>
+                                                </td>
+                                            @else
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <span class="text-black-600 hover:text-black-900 mb-2 mr-2">Sin acciones disponibles</span>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

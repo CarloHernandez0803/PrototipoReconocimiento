@@ -12,7 +12,7 @@
 
                 <div class="mt-4">
                     <x-label for="tipo" value="{{ __('Tipo de experiencia') }}" />
-                    <select id="tipo" name="tipo" class="block mt-1 w-full">
+                    <select id="tipo_experiencia" name="tipo_experiencia" class="block mt-1 w-full">
                         <option value="Positiva">{{ __('Positiva') }}</option>
                         <option value="Neutra">{{ __('Neutra') }}</option>
                         <option value="Negativa">{{ __('Negativa') }}</option>

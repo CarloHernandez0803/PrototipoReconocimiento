@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Evaluacion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EvaluacionController extends Controller
 {
@@ -26,10 +27,12 @@ class EvaluacionController extends Controller
             'senales_totales' => 'required|integer',
             'calificacion_media' => 'required|integer|min:1|max:5',
             'comentarios' => 'nullable|string',
-            'alumno' => 'required|exists:Usuarios,id_usuario',
         ]);
 
-        Evaluacion::create($validated);
+        $evaluacion = Evaluacion::create([
+            ...$validated,
+            'alumno' => Auth::id(),
+        ]);
 
         return redirect()->route('evaluaciones.index')->with('success', 'Evaluacion a la red creada exitosamente');
     }
@@ -56,7 +59,6 @@ class EvaluacionController extends Controller
             'senales_totales' => 'required|integer',
             'calificacion_media' => 'required|integer|min:1|max:5',
             'comentarios' => 'nullable|string',
-            'alumno' => 'required|exists:Usuarios,id_usuario',
         ]);
 
         $evaluacion->update($validated);

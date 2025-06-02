@@ -25,7 +25,7 @@ class BaseDatosController extends Controller
 
             foreach ($tables as $table) 
             {
-                $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
+                $tableName = collect((array) $table)->first();
 
                 $createTable = DB::select("SHOW CREATE TABLE `{$tableName}`");
                 $sqlContent .= "-- Estructura de la tabla `{$tableName}`\n";
@@ -96,7 +96,7 @@ class BaseDatosController extends Controller
 
             // Elimina todas las tablas existentes
             foreach ($tables as $table) {
-                $tableName = $table->{'Tables_in_' . env('DB_DATABASE')};
+                $tableName = collect((array) $table)->first();
                 DB::statement("DROP TABLE IF EXISTS `{$tableName}`;");
             }
 

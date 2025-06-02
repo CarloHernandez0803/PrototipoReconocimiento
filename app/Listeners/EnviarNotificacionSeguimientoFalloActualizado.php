@@ -14,6 +14,6 @@ class EnviarNotificacionSeguimientoFalloActualizado
 
     public function handle(SeguimientoFalloActualizado $event)
     {
-        $event->resolucion->incidencia->coordinador->notify(new SeguimientoFalloActualizadoNotification($event->resolucion));
+        $event->resolucion->incidenciaRegistrada->usuarioCoordinador->notify(new SeguimientoFalloActualizadoNotification($event->resolucion));
     }
 }

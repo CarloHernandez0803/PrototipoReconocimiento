@@ -4,7 +4,7 @@
 Bienvenido a {{ config('app.name') }}. Tu cuenta ha sido creada exitosamente.
 
 Aquí tienes algunos detalles de tu cuenta:
-- **Nombre:** {{ $usuario->nombre }} . {{ $usuario->apellidos }}
+- **Nombre:** {{ $usuario->nombre }} {{ $usuario->apellidos }}
 - **Correo electrónico:** {{ $usuario->correo }}
 - **Rol:** {{ $usuario->rol }}
 

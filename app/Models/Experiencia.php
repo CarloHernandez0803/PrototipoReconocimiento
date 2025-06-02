@@ -25,7 +25,7 @@ class Experiencia extends Model
         'fecha_experiencia' => 'datetime',
     ];
 
-    public function usuario()
+    public function usuarioUser()
     {
         return $this->belongsTo(Usuario::class, 'usuario', 'id_usuario');
     }

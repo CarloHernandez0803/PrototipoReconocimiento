@@ -3,7 +3,7 @@
 namespace App\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
-use App\Models\ResolucionIncidencias;
+use App\Models\Resolucion;
 
 class SeguimientoFalloActualizado
 {
@@ -11,7 +11,7 @@ class SeguimientoFalloActualizado
 
     public $resolucion;
 
-    public function __construct(ResolucionIncidencias $resolucion)
+    public function __construct(Resolucion $resolucion)
     {
         $this->resolucion = $resolucion;
     }

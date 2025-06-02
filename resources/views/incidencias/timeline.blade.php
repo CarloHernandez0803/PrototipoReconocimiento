@@ -35,7 +35,7 @@
                         @foreach ($incidencias as $incidencia)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $incidencia->coordinador->nombre ?? 'Desconocido' }}
+                                    {{ $incidencia->usuarioCoordinador->nombre }} {{ $incidencia->usuarioCoordinador->apellidos }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $incidencia->descripcion }}

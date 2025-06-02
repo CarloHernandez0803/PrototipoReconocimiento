@@ -3,7 +3,7 @@
 namespace App\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
-use App\Models\ExperienciaUsuario;
+use App\Models\Experiencia;
 
 class ExperienciaUsuarioRegistrada
 {
@@ -11,7 +11,7 @@ class ExperienciaUsuarioRegistrada
 
     public $experiencia;
 
-    public function __construct(ExperienciaUsuario $experiencia)
+    public function __construct(Experiencia $experiencia)
     {
         $this->experiencia = $experiencia;
     }

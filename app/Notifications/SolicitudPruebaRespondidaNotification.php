@@ -4,13 +4,13 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\SolicitudPrueba;
+use App\Models\Solicitud;
 
 class SolicitudPruebaRespondidaNotification extends Notification
 {
     protected $solicitud;
 
-    public function __construct(SolicitudPrueba $solicitud)
+    public function __construct(Solicitud $solicitud)
     {
         $this->solicitud = $solicitud;
     }

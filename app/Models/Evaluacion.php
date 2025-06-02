@@ -27,7 +27,7 @@ class Evaluacion extends Model
         'fecha_evaluacion' => 'datetime',
     ];
 
-    public function alumno()
+    public function usuarioAlumno()
     {
         return $this->belongsTo(Usuario::class, 'alumno', 'id_usuario');
     }

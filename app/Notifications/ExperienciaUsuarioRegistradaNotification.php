@@ -4,13 +4,13 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\ExperienciaUsuario;
+use App\Models\Experiencia;
 
 class ExperienciaUsuarioRegistradaNotification extends Notification
 {
     protected $experiencia;
 
-    public function __construct(ExperienciaUsuario $experiencia)
+    public function __construct(Experiencia $experiencia)
     {
         $this->experiencia = $experiencia;
     }

@@ -27,17 +27,17 @@ class Solicitud extends Model
         'fecha_respuesta' => 'datetime',
     ];
 
-    public function coordinador()
+    public function usuarioCoordinador()
     {
         return $this->belongsTo(Usuario::class, 'coordinador', 'id_usuario');
     }
 
-    public function administrador()
+    public function usuarioAdministrador()
     {
         return $this->belongsTo(Usuario::class, 'administrador', 'id_usuario');
     }
 
-    public function alumno()
+    public function usuarioAlumno()
     {
         return $this->belongsTo(Usuario::class, 'alumno', 'id_usuario');
     }

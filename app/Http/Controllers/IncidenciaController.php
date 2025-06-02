@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Resolucion;
 use App\Models\Usuario;
 use App\Events\ReporteFalloRegistrado;
+use Illuminate\Support\Facades\Auth;
 
 class IncidenciaController extends Controller
 {
@@ -26,10 +27,12 @@ class IncidenciaController extends Controller
         $validated = $request->validate([
             'tipo_experiencia' => 'required|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
             'descripcion' => 'required|string',
-            'coordinador' => 'nullable|exists:Usuarios,id_usuario',
         ]);
 
-        $incidencia = Incidencia::create($validated);
+        $incidencia = Incidencia::create([
+            ...$validated,
+            'coordinador' => Auth::id(),
+        ]);
 
         event(new ReporteFalloRegistrado($incidencia));
 
@@ -55,7 +58,6 @@ class IncidenciaController extends Controller
         $validated = $request->validate([
             'tipo_experiencia' => 'nullable|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
             'descripcion' => 'nullable|string',
-            'coordinador' => 'nullable|exists:Usuarios,id_usuario',
         ]);
 
         $incidencia->update($validated);

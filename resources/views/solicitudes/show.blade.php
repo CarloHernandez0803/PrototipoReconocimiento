@@ -11,9 +11,9 @@
                 <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                         <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-200 w-full">
+                            <table class="min-w-full table-fixed divide-y divide-gray-200 w-full">
                                 <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 w-1/5 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         {{ __('ID') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
@@ -21,7 +21,7 @@
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 w-1/5 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         {{ __('Estado') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
@@ -29,7 +29,7 @@
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 w-1/5 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         {{ __('Fecha de Solicitud') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
@@ -37,7 +37,7 @@
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 w-1/5 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         {{ __('Fecha de Respuesta') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
@@ -45,27 +45,27 @@
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 w-1/5 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         {{ __('Administrador') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $solicitud->administrador }}
+                                        {{ $solicitud->usuarioAdministrador ? $solicitud->usuarioAdministrador->nombre . ' ' . $solicitud->usuarioAdministrador->apellidos : __('No asignado') }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 w-1/5 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         {{ __('Coordinador') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $solicitud->coordinador }}
+                                        {{ $solicitud->usuarioCoordinador->nombre }} {{ $solicitud->usuarioCoordinador->apellidos }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 w-1/5 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         {{ __('Alumno') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $solicitud->alumno }}
+                                        {{ $solicitud->usuarioAlumno->nombre }} {{ $solicitud->usuarioAlumno->apellidos }}
                                     </td>
                                 </tr>
                             </table>

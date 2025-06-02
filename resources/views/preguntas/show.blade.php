@@ -57,7 +57,7 @@
                                         {{ __('Respuesta') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $pregunta->respuesta }}
+                                        {{ $pregunta->respuesta ? $pregunta->respuesta : __('Sin respuesta') }}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -81,7 +81,7 @@
                                         {{ __('Usuario') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $pregunta->usuario }}
+                                        {{ $pregunta->usuarioUser->nombre }} {{ $pregunta->usuarioUser->apellidos }} ({{ $pregunta->usuarioUser->rol }})
                                     </td>
                                 </tr>
                             </table>

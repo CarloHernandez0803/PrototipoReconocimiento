@@ -49,7 +49,7 @@
                             @foreach($imagenes as $index => $ruta)
                                 <div class="relative group">
                                     <div class="h-32 w-full bg-gray-100 rounded-md shadow-sm flex items-center justify-center overflow-hidden border">
-                                        <img src="{{ route('senalamientos.imagen', ['id' => $lote->id_senalamiento_prueba, 'index' => $index]) }}?v={{ time() }}" 
+                                        <img src="{{ route('senalamientos.prueba.imagen', ['id' => $lote->id_senalamiento_prueba, 'index' => $index]) }}?v={{ time() }}" 
                                             alt="Imagen {{ $index + 1 }}" 
                                             class="max-h-full max-w-full object-contain"
                                             onerror="this.onerror=null;this.src='{{ asset('images/image-not-found.png') }}'">

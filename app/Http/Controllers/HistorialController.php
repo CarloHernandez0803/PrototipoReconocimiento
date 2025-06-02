@@ -9,7 +9,7 @@ class HistorialController extends Controller
 {
     public function index()
     {
-        $historial = HistorialEntrenamiento::orderBy('fecha_creacion', 'desc')->get();
+        $historial = Historial::orderBy('fecha_creacion', 'desc')->get();
         return view('modulo_entrenamiento.index', compact('mod_entrenamiento'));
     }
 
@@ -39,7 +39,7 @@ class HistorialController extends Controller
         $modeloPath = "models/" . $request->model_architecture . "_" . date('Y-m-d_H-i-s') . ".h5";
         $pesosPath = "weights/" . $request->model_architecture . "_" . date('Y-m-d_H-i-s') . ".weights";
 
-        $historial = HistorialEntrenamiento::create([
+        $historial = Historial::create([
             'hiperparametros' => json_encode($hiperparametros),
             'modelo' => $modeloPath,
             'pesos' => $pesosPath,
@@ -54,7 +54,7 @@ class HistorialController extends Controller
 
     public function show($id)
     {
-        $entrenamiento = HistorialEntrenamiento::with('usuario')->findOrFail($id);
+        $entrenamiento = Historial::with('usuario')->findOrFail($id);
             
         return view('modulo_entrenamiento.show', compact('entrenamiento'));
     }

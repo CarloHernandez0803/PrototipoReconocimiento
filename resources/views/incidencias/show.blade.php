@@ -42,11 +42,21 @@
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
                                         @if ($incidencia->resolucion)
-                                            <p><strong>Estado:</strong> {{ $incidencia->resolucion->estado }}</p>
-                                            <p><strong>Fecha:</strong> {{ $incidencia->resolucion->fecha_resolucion ? $incidencia->resolucion->fecha_resolucion->format('d/m/Y H:i') : 'No disponible' }}</p>
-                                            <a href="{{ route('resoluciones.edit', $incidencia->resolucion->id_resolucion) }}" class="text-indigo-600 hover:text-indigo-900">Editar Resolución</a>
+                                            <div class="mb-2">
+                                                <p><strong>Estado:</strong> {{ $incidencia->resolucion->estado }}</p>
+                                                <p><strong>Fecha:</strong> {{ $incidencia->resolucion->fecha_resolucion ? $incidencia->resolucion->fecha_resolucion->format('d/m/Y H:i') : 'No disponible' }}</p>
+                                            </div>
+                                            <div class="mt-2">
+                                                <a href="{{ route('resoluciones.edit', $incidencia->resolucion->id_resolucion) }}"
+                                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded shadow">
+                                                    ✏️ Editar Resolución
+                                                </a>
+                                            </div>
                                         @else
-                                            <a href="{{ route('resoluciones.create', $incidencia->id_incidencia) }}" class="text-green-600 hover:text-green-900">Registrar Resolución</a>
+                                            <a href="{{ route('resoluciones.create', $incidencia->id_incidencia) }}"
+                                            class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow">
+                                                ➕ Registrar Resolución
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -63,7 +73,7 @@
                                         {{ __('Usuario') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->coordinador }}
+                                        {{ $incidencia->usuarioCoordinador->nombre }} {{ $incidencia->usuarioCoordinador->apellidos }}
                                     </td>
                                 </tr>
                             </table>

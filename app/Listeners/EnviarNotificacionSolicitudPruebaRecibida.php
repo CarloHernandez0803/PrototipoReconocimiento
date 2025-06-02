@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\SolicitudPruebaRecibida;
 use App\Notifications\SolicitudPruebaRecibidaNotification;
+use App\Models\Usuario;
 
 class EnviarNotificacionSolicitudPruebaRecibida
 {
@@ -18,7 +19,5 @@ class EnviarNotificacionSolicitudPruebaRecibida
         foreach ($administradores as $admin) {
             $admin->notify(new SolicitudPruebaRecibidaNotification($event->solicitud));
         }
-
-        $event->solicitud->alumno->notify(new SolicitudPruebaRecibidaNotification($event->solicitud));
     }
 }

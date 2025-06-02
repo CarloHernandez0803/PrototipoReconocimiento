@@ -31,7 +31,7 @@ class Incidencia extends Model
         return $this->hasOne(Resolucion::class, 'incidencia', 'id_incidencia');
     }
 
-    public function coordinador()
+    public function usuarioCoordinador()
     {
         return $this->belongsTo(Usuario::class, 'coordinador', 'id_usuario');
     }

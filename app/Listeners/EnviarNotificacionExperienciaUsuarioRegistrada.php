@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\ExperienciaUsuarioRegistrada;
 use App\Notifications\ExperienciaUsuarioRegistradaNotification;
+use App\Models\Usuario;
 
 class EnviarNotificacionExperienciaUsuarioRegistrada
 {

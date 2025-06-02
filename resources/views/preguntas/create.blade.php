@@ -36,15 +36,6 @@
                     </select>
                 </div>
 
-                <div class="mt-4">
-                    <x-label for="estado" value="{{ __('Estado de la pregunta') }}" />
-                    <select id="estado" name="estado" class="block mt-1 w-full">
-                        <option value="Pendiente">{{ __('Pendiente') }}</option>
-                        <option value="Respondida">{{ __('Respondida') }}</option>
-                        <option value="Resuelta">{{ __('Resuelta') }}</option>
-                    </select>
-                </div>
-
                 <div class="flex items-center justify-end mt-4">
                     <x-button class="ms-4 bg-purple-900">
                         {{ __('Registrar') }}

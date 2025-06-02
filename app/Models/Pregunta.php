@@ -29,7 +29,7 @@ class Pregunta extends Model
         'fecha_act' => 'datetime',
     ];
 
-    public function usuario()
+    public function usuarioUser()
     {
         return $this->belongsTo(Usuario::class, 'usuario', 'id_usuario');
     }

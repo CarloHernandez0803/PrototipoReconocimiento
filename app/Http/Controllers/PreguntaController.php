@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pregunta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PreguntaController extends Controller
 {
@@ -24,12 +25,14 @@ class PreguntaController extends Controller
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'categoria' => 'required|in:Funcionalidad del Sistema,Reportes de Errores,Solicitudes de Mejora,Otros',
-            'estado' => 'required|in:Pendiente,Respondida,Resuelta',
+            'estado' => 'Pendiente',
             'respuesta' => 'nullable|string',
-            'usuario' => 'nullable|exists:Usuarios,id_usuario',
         ]);
 
-        Pregunta::create($validated);
+        $pregunta = Pregunta::create([
+            ...$validated,
+            'usuario' => Auth::id(),
+        ]);
 
         return redirect()->route('preguntas.index')->with('success', 'Pregunta creada exitosamente');
     }

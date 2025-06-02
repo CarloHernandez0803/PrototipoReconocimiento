@@ -57,7 +57,7 @@
                                         {{ __('Usuario') }}
                                     </th>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $experiencia->usuario }}
+                                        {{ $experiencia->usuarioUser->nombre }} {{ $experiencia->usuarioUser->apellidos }} ({{ $experiencia->usuarioUser->rol }})
                                     </td>
                                 </tr>
                             </table>

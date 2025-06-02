@@ -25,7 +25,7 @@ class Resolucion extends Model
         'fecha_resolucion' => 'datetime',
     ];
 
-    public function incidencia()
+    public function incidenciaRegistrada()
     {
         return $this->belongsTo(Incidencia::class, 'incidencia', 'id_incidencia');
     }

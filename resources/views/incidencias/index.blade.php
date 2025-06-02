@@ -69,15 +69,23 @@
                                                 @endif
                                             </td>
 
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('incidencias.show', $incidencia->id_incidencia) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
-                                                <a href="{{ route('incidencias.edit', $incidencia->id_incidencia) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
-                                                <form class="inline-block" action="{{ route('incidencias.destroy', $incidencia->id_incidencia) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
-                                                </form>
-                                            </td>
+                                            @if(Auth::user()->id_usuario === $incidencia->coordinador || Auth::user()->rol === 'Administrador')
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <a href="{{ route('incidencias.show', $incidencia->id_incidencia) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
+                                                    @if(Auth::user()->id_usuario === $incidencia->coordinador)
+                                                        <a href="{{ route('incidencias.edit', $incidencia->id_incidencia) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
+                                                    @endif
+                                                    <form class="inline-block" action="{{ route('incidencias.destroy', $incidencia->id_incidencia) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
+                                                    </form>
+                                                </td>
+                                            @else
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <span class="text-black-600 hover:text-black-900 mb-2 mr-2">Sin acciones disponibles</span>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -14,7 +14,7 @@
                     <div class="shadow overflow-hidden sm:rounded-md">
                         <div class="px-4 py-5 bg-white sm:p-6">
                             <label for="tipo" class="block font-medium text-sm text-gray-700">{{ __('Tipo de experiencia') }}</label>
-                            <select name="tipo" id="tipo" class="form-select rounded-md shadow-sm mt-1 block w-full">
+                            <select name="tipo_experiencia" id="tipo_experiencia" class="form-select rounded-md shadow-sm mt-1 block w-full">
                                 <option value="Positiva" {{ old('tipo', $experiencia->tipo_experiencia) == 'Positiva' ? 'selected' : '' }}>
                                     {{ __('Positiva') }}
                                 </option>
@@ -57,7 +57,7 @@
                         </div>
 
                         <div class="flex items-center justify-end px-4 py-3 bg-gray-50 text-right sm:px-6">
-                            <a href="{{ route('senalamientos_pruebas.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+                            <a href="{{ route('experiencias.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
                                 {{ __('Cancelar') }}
                             </a>
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-purple-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">

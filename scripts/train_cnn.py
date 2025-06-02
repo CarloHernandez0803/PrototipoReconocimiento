@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
 import os
 import sys
 import json
 import traceback
 import tempfile
 import numpy as np
-from io import BytesIO
-import paramiko
-import stat  # Importación faltante para _is_directory
+from ftplib import FTP  # Volvemos a FTP estándar
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
@@ -25,74 +22,122 @@ logger = logging.getLogger(__name__)
 
 class FTPClient:
     def __init__(self):
-        self.host = os.getenv('FTP_HOST')
-        self.user = os.getenv('FTP_USER')
-        self.passwd = os.getenv('FTP_PASS')
-        self.port = 22  # SFTP usa puerto 22
-    
-    def download_directory(self, remote_path, local_path):
-        """Descarga recursiva de directorios usando SFTP"""
+        self.host = os.getenv('FTP_HOST', 'ftpupload.net')
+        self.user = os.getenv('FTP_USERNAME', 'ezyro_38892559')
+        self.passwd = os.getenv('FTP_PASSWORD', 'd65b1ec10a1')
+        self.port = int(os.getenv('FTP_PORT', '21'))
+        self.timeout = int(os.getenv('FTP_TIMEOUT', '60'))
+        self.ftp = None  # Inicializamos la conexión aquí
+        
+        if not all([self.host, self.user, self.passwd]):
+            missing = []
+            if not self.host: missing.append('FTP_HOST')
+            if not self.user: missing.append('FTP_USERNAME')
+            if not self.passwd: missing.append('FTP_PASSWORD')
+            raise ValueError(f"Credenciales FTP faltantes: {', '.join(missing)}")
+
+    def connect(self):
+        """Establece una única conexión persistente"""
+        if self.ftp is not None:
+            try:
+                self.ftp.voidcmd("NOOP")
+                return True
+            except:
+                self.ftp.quit()
+                self.ftp = None
+        
         try:
-            transport = paramiko.Transport((self.host, self.port))
-            transport.connect(username=self.user, password=self.passwd)
-            sftp = paramiko.SFTPClient.from_transport(transport)
+            self.ftp = FTP()
+            self.ftp.connect(self.host, self.port, self.timeout)
+            self.ftp.login(self.user, self.passwd)
+            logger.info(f"Conexión FTP establecida con {self.user}@{self.host}")
+            return True
+        except Exception as e:
+            logger.error(f"Error conectando a FTP: {str(e)}")
+            if self.ftp:
+                self.ftp.quit()
+                self.ftp = None
+            return False
+
+    def download_directory(self, remote_path, local_path):
+        """Versión corregida para manejo de rutas"""
+        if not self.connect():
+            return False
             
+        try:
+            # Normalizar rutas
+            remote_path = remote_path.replace('\\', '/').strip('/')
+            original_dir = self.ftp.pwd()
+            
+            try:
+                # Intentar acceso directo
+                self.ftp.cwd(remote_path)
+            except Exception as e:
+                # Si falla, intentar navegación paso a paso
+                parts = remote_path.split('/')
+                for part in parts:
+                    try:
+                        self.ftp.cwd(part)
+                    except Exception as e:
+                        logger.error(f"No se puede acceder a {part}: {str(e)}")
+                        self.ftp.cwd(original_dir)
+                        return False
+            
+            items = [item for item in self.ftp.nlst() if item not in ('.', '..')]
             os.makedirs(local_path, exist_ok=True)
             
-            for item in sftp.listdir(remote_path):
-                remote_item = f"{remote_path}/{item}"
-                local_item = os.path.join(local_path, item)
-                
+            for item in items:
                 try:
-                    if self._is_directory(sftp, remote_item):
-                        self.download_directory(remote_item, local_item)
+                    local_item = os.path.join(local_path, item)
+                    
+                    # Verificar si es directorio
+                    is_dir = False
+                    try:
+                        self.ftp.cwd(item)
+                        self.ftp.cwd('..')
+                        is_dir = True
+                    except:
+                        pass
+                    
+                    if is_dir:
+                        logger.info(f"Procesando directorio: {item}")
+                        self.download_directory(f"{remote_path}/{item}", local_item)
                     elif item.lower().endswith(('.jpg', '.jpeg', '.png')):
-                        with BytesIO() as buf:
-                            sftp.getfo(remote_item, buf)
-                            buf.seek(0)
-                            with open(local_item, 'wb') as f:
-                                f.write(buf.getvalue())
-                            logger.info(f"Descargado: {remote_item}")
+                        logger.info(f"Descargando archivo: {item}")
+                        with open(local_item, 'wb') as f:
+                            self.ftp.retrbinary(f"RETR {item}", f.write)
                 except Exception as e:
-                    logger.error(f"Error procesando {remote_item}: {str(e)}")
+                    logger.warning(f"Error procesando {item}: {str(e)}")
                     continue
             
-            sftp.close()
-            transport.close()
+            self.ftp.cwd(original_dir)
             return True
-        
-        except Exception as e:
-            logger.error(f"Error SFTP: {str(e)}")
-            return False
-    
-    def _is_directory(self, sftp, path):
-        """Verifica si un path remoto es directorio"""
-        try:
-            return stat.S_ISDIR(sftp.stat(path).st_mode)
-        except:
-            return False
-    
-    def upload_model(self, local_model_path, local_weights_path):
-        """Sube los archivos del modelo al servidor"""
-        try:
-            transport = paramiko.Transport((self.host, self.port))
-            transport.connect(username=self.user, password=self.passwd)
-            sftp = paramiko.SFTPClient.from_transport(transport)
             
+        except Exception as e:
+            logger.error(f"Error fatal en descarga: {str(e)}")
+            return False
+
+    def upload_model(self, local_model_path, local_weights_path):
+        """Sube archivos manteniendo la conexión"""
+        if not self.connect():
+            return False
+            
+        try:
             # Subir modelo
             with open(local_model_path, 'rb') as f:
-                sftp.putfo(f, 'modelo.cnn')
-            
+                self.ftp.storbinary('STOR modelo.cnn', f)
             # Subir pesos
             with open(local_weights_path, 'rb') as f:
-                sftp.putfo(f, 'pesos.cnn')
-            
-            sftp.close()
-            transport.close()
+                self.ftp.storbinary('STOR pesos.cnn', f)
             return True
         except Exception as e:
-            logger.error(f"Error subiendo modelo: {str(e)}")
+            logger.error(f"Error subiendo archivos: {str(e)}")
             return False
+
+    def __del__(self):
+        """Destructor para cerrar conexión"""
+        if self.ftp is not None:
+            self.ftp.quit()
 
 def create_model(params, input_shape, num_classes):
     """Crea la arquitectura del modelo CNN"""
@@ -130,7 +175,7 @@ def main():
             # 3. Descargar datos de entrenamiento
             ftp = FTPClient()
             train_dir = os.path.join(temp_dir, 'train')
-            remote_train_path = '/datasets/entrenamientos/'
+            remote_train_path = 'datasets/entrenamientos'
             
             if not ftp.download_directory(remote_train_path, train_dir):
                 raise Exception("Error descargando datos de entrenamiento")
@@ -139,10 +184,10 @@ def main():
             
             # 4. Configurar generador de imágenes
             train_datagen = ImageDataGenerator(
-                rescale=params['rescale'],
-                zoom_range=params['zoom_range'],
-                horizontal_flip=bool(params['horizontal_flip']),
-                vertical_flip=bool(params['vertical_flip']),
+                rescale=params.get('rescale', 1./255),  # Valor por defecto
+                zoom_range=params.get('zoom_range', 0.2),
+                horizontal_flip=params.get('horizontal_flip', False),
+                vertical_flip=params.get('vertical_flip', False),
                 validation_split=0.0
             )
             
@@ -184,8 +229,8 @@ def main():
             )
             
             # 7. Guardar y subir modelo
-            model_path = os.path.join(temp_dir, 'modelo_final.h5')
-            weights_path = os.path.join(temp_dir, 'pesos_final.h5')
+            model_path = os.path.join(temp_dir, 'modelo.h5')
+            weights_path = os.path.join(temp_dir, 'pesos.h5')
             
             model.save(model_path)
             model.save_weights(weights_path)

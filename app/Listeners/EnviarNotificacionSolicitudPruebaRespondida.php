@@ -14,8 +14,8 @@ class EnviarNotificacionSolicitudPruebaRespondida
 
     public function handle(SolicitudPruebaRespondida $event)
     {
-        $event->solicitud->coordinador->notify(new SolicitudPruebaRespondidaNotification($event->solicitud));
+        $event->solicitud->usuarioCoordinador->notify(new SolicitudPruebaRespondidaNotification($event->solicitud));
 
-        $event->solicitud->alumno->notify(new SolicitudPruebaRespondidaNotification($event->solicitud));
+        $event->solicitud->usuarioAlumno->notify(new SolicitudPruebaRespondidaNotification($event->solicitud));
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
-use App\Models\SolicitudPrueba;
+use App\Models\Solicitud;
 
 class SolicitudPruebaRecibida
 {
@@ -11,7 +11,7 @@ class SolicitudPruebaRecibida
 
     public $solicitud;
 
-    public function __construct(SolicitudPrueba $solicitud)
+    public function __construct(Solicitud $solicitud)
     {
         $this->solicitud = $solicitud;
     }

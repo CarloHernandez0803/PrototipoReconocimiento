@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\ReporteFalloRegistrado;
 use App\Notifications\ReporteFalloRegistradoNotification;
+use App\Models\Usuario;
 
 class EnviarNotificacionReporteFalloRegistrado
 {

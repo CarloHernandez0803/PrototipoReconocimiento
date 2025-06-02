@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Experiencia;
 use Illuminate\Http\Request;
 use App\Events\ExperienciaUsuarioRegistrada;
+use Illuminate\Support\Facades\Auth;
 
 class ExperienciaController extends Controller
 {
@@ -25,10 +26,12 @@ class ExperienciaController extends Controller
             'tipo_experiencia' => 'required|in:Positiva,Negativa,Neutra',
             'descripcion' => 'required|string',
             'impacto' => 'required|in:Alto,Medio,Bajo',
-            'usuario' => 'nullable|exists:Usuarios,id_usuario',
         ]);
 
-        $experiencia = Experiencia::create($validated);
+        $experiencia = Experiencia::create([
+            ...$validated,
+            'usuario' => Auth::id(),
+        ]);
 
         event(new ExperienciaUsuarioRegistrada($experiencia));
 
