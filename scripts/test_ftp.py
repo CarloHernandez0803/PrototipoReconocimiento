@@ -10,9 +10,9 @@ logging.basicConfig(
 
 # Configuración (usa tus credenciales reales)
 FTP_CONFIG = {
-    'host': 'ftpupload.net',
-    'user': 'ezyro_38892559',
-    'passwd': 'd65b1ec10a1',
+    'host': '',
+    'user': '',
+    'passwd': '',
     'port': 21,
     'remote_path': '/datasets/entrenamientos'  # Ajusta esta ruta
 }

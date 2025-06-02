@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 
 class FTPClient:
     def __init__(self):
-        self.host = os.getenv('FTP_HOST', 'ftpupload.net')
-        self.user = os.getenv('FTP_USERNAME', 'ezyro_38892559')
-        self.passwd = os.getenv('FTP_PASSWORD', 'd65b1ec10a1')
+        self.host = os.getenv('FTP_HOST', '') #Tratar de usar credenciales dadas por .env
+        self.user = os.getenv('FTP_USERNAME', '')
+        self.passwd = os.getenv('FTP_PASSWORD', '')
         self.port = int(os.getenv('FTP_PORT', '21'))
         self.timeout = int(os.getenv('FTP_TIMEOUT', '60'))
         self.ftp = None  # Inicializamos la conexión aquí
