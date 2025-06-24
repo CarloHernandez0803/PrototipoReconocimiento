@@ -9,3 +9,25 @@
 .fc-toolbar-title {
     text-transform: capitalize;
 }
+
+tr:nth-child(2n) {
+    background-color: #f9f9f9; /* Un color tenue para diferenciar filas */
+}
+
+
+tr:nth-child(3n+2), tr:nth-child(3n+3) {
+    background-color: #f9f9f9; /* Color claro para separar cada sección */
+}
+
+
+.enc {
+    background-color: #564194; /* Morado suave */
+    font-size: 12px; /* Ajusta según prefieras */
+    text-align: left;
+    font-weight: bold;
+    padding: 10px;
+    color: white;
+}
+
+
+

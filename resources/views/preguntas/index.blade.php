@@ -24,54 +24,69 @@
                                             Pregunta
                                         </th>
                                         <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                            Descripción
+                                            <!-- Descripción -->
                                         </th>
                                         <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                            Respuesta
+                                            <!-- Respuesta -->
                                         </th>
                                         <th scope="col" width="200" class="px-6 py-3 bg-purple-900">
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach ($preguntas as $pregunta)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $pregunta->id_pregunta }}
-                                            </td>
+                                <tbody>
+    @foreach ($preguntas as $pregunta)
+        <tbody class="bg-white border border-purple-300 shadow-md rounded mb-6">
+            <!-- Primera fila con ID y Pregunta -->
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ $pregunta->id_pregunta }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        {{ $pregunta->titulo }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" colspan="3">
+                    <a href="{{ route('preguntas.show', $pregunta->id_pregunta) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
+                    <a href="{{ route('preguntas.edit', $pregunta->id_pregunta) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
+                    <form class="inline-block" action="{{ route('preguntas.destroy', $pregunta->id_pregunta) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
+                        @csrf
+                        @method('DELETE')
+                        <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
+                    </form>
+                </td>
+            </tr>
 
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                    {{ $pregunta->titulo }}
-                                                </span>
-                                            </td>
+            <!-- Descripción -->
+            <tr>
+                <td class="px-6 py-2 bg-purple-900 text-sm font-medium text-white uppercase tracking-wider" colspan="5">
+                    Descripción
+                </td>
+            </tr>
+            <tr>
+                <td class="px-6 py-4 text-sm text-gray-900" colspan="5">
+                    {{ $pregunta->descripcion }}
+                </td>
+            </tr>
 
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $pregunta->descripcion }}
-                                            </td>
+            <!-- Respuesta -->
+            <tr>
+                <td class="px-6 py-2 bg-purple-900 text-sm font-medium text-white uppercase tracking-wider" colspan="5">
+                    Respuesta
+                </td>
+            </tr>
+            <tr>
+                <td class="px-6 py-4 text-sm text-gray-900" colspan="5">
+                    {{ $pregunta->respuesta ? $pregunta->respuesta : __('Sin respuesta') }}
+                </td>
+            </tr>
+        </tbody>
+    @endforeach
+</tbody>
 
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $pregunta->respuesta ? $pregunta->respuesta : __('Sin respuesta') }}
-                                            </td>
 
-                                            @if(Auth::user()->id_usuario === $pregunta->usuario || Auth::user()->rol === 'Administrador')
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <a href="{{ route('preguntas.show', $pregunta->id_pregunta) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
-                                                    <a href="{{ route('preguntas.edit', $pregunta->id_pregunta) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
-                                                    <form class="inline-block" action="{{ route('preguntas.destroy', $pregunta->id_pregunta) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
-                                                    </form>
-                                                </td>
-                                            @else
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <span class="text-black-600 hover:text-black-900 mb-2 mr-2">Sin acciones disponibles</span>
-                                                </td>
-                                            @endif
-                                        </tr>
-                                    @endforeach
-                                </tbody>
+
+
                             </table>
                         </div>
                     </div>
