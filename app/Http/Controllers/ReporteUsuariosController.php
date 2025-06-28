@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Solicitud;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Collection;
+use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReporteUsuariosController extends Controller
@@ -18,71 +17,159 @@ class ReporteUsuariosController extends Controller
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
 
-            $query = Usuario::query();
-
-            $baseQuery = $query->select([
-                'usuarios.id_usuario',
-                DB::raw('CONCAT(usuarios.nombre, " ", usuarios.apellidos) as nombre'),
-                'usuarios.rol',
-                DB::raw('COUNT(DISTINCT solicitudes_prueba.id_solicitud) as actividades'),
-                DB::raw('AVG(CASE 
-                    WHEN solicitudes_prueba.fecha_respuesta IS NOT NULL 
-                    THEN TIMESTAMPDIFF(HOUR, solicitudes_prueba.fecha_solicitud, solicitudes_prueba.fecha_respuesta)
-                    ELSE NULL 
-                END) as tiempo_promedio')
+            // Base query con relaciones
+            $query = Solicitud::with([
+                'usuarioAlumno',
+                'usuarioCoordinador',
+                'usuarioAdministrador'
             ])
-            ->leftJoin('solicitudes_prueba', 'usuarios.id_usuario', '=', 'solicitudes_prueba.alumno');
+            ->select([
+                'solicitudes_prueba.*',
+                DB::raw('CONCAT(alumno.nombre, " ", alumno.apellidos) as alumno_nombre'),
+                DB::raw('CONCAT(coordinador.nombre, " ", coordinador.apellidos) as coordinador_nombre'),
+                DB::raw('CONCAT(administrador.nombre, " ", administrador.apellidos) as administrador_nombre')
+            ])
+            ->leftJoin('usuarios as alumno', 'solicitudes_prueba.alumno', '=', 'alumno.id_usuario')
+            ->leftJoin('usuarios as coordinador', 'solicitudes_prueba.coordinador', '=', 'coordinador.id_usuario')
+            ->leftJoin('usuarios as administrador', 'solicitudes_prueba.administrador', '=', 'administrador.id_usuario');
 
+            // Aplicar filtros de fecha si existen
             if ($startDate && $endDate) {
-                $baseQuery->where(function($q) use ($startDate, $endDate) {
-                    $q->whereBetween('solicitudes_prueba.fecha_solicitud', [
-                        date('Y-m-d 00:00:00', strtotime($startDate)),
-                        date('Y-m-d 23:59:59', strtotime($endDate))
-                    ]);
-                });
+                $query->whereBetween('solicitudes_prueba.fecha_solicitud', [
+                    Carbon::parse($startDate)->startOfDay(),
+                    Carbon::parse($endDate)->endOfDay()
+                ]);
             }
 
-            $usuarios = $baseQuery
-                ->groupBy('usuarios.id_usuario', 'usuarios.nombre', 'usuarios.apellidos', 'usuarios.rol') 
-                ->get();
+            $solicitudes = $query->get();
 
-            $totalActividades = $usuarios->sum('actividades');
-            $tiempoPromedioAprobacion = $usuarios->avg('tiempo_promedio');
+            // Procesamiento de datos
+            $usuarios = $this->procesarUsuarios($solicitudes);
+            $totalActividades = $solicitudes->count();
+            $tiempoPromedioGeneral = $solicitudes->avg(function($item) {
+                return $item->fecha_respuesta ? 
+                    Carbon::parse($item->fecha_solicitud)->diffInHours(Carbon::parse($item->fecha_respuesta)) : 
+                    null;
+            });
 
-            $usuariosMasActivos = $usuarios
-                ->sortByDesc('actividades')
+            // Obtener usuarios más activos (top 5)
+            $usuariosMasActivos = collect($usuarios)
+                ->sortByDesc('total_actividades')
                 ->take(5);
 
-            $tiempoPromedioPorRol = $usuarios
-                ->groupBy('rol')
-                ->map(function ($group) {
-                    return $group->avg('tiempo_promedio');
-                });
+            // Calcular tiempo promedio por rol
+            $tiempoPorRol = [
+                'Alumno' => collect($usuarios)
+                    ->where('rol', 'Alumno')
+                    ->avg('tiempo_promedio'),
+                'Coordinador' => collect($usuarios)
+                    ->where('rol', 'Coordinador')
+                    ->avg('tiempo_promedio'),
+                'Administrador' => collect($usuarios)
+                    ->where('rol', 'Administrador')
+                    ->avg('tiempo_promedio')
+            ];
 
             return response()->json([
-                'resumen' => [
-                    'total_actividades' => $totalActividades,
-                    'tiempo_promedio_aprobacion' => round($tiempoPromedioAprobacion, 2),
-                ],
-                'usuarios_mas_activos' => $usuariosMasActivos,
-                'tiempo_promedio_por_rol' => $tiempoPromedioPorRol,
-                'detalle_usuarios' => $usuarios,
+                'success' => true,
+                'data' => [
+                    'resumen' => [
+                        'total_actividades' => $totalActividades,
+                        'tiempo_promedio_general' => $tiempoPromedioGeneral ? round(abs($tiempoPromedioGeneral), 2) : null,
+                        'usuarios_activos' => count($usuarios),
+                        'rango_fechas' => $startDate && $endDate ? 
+                            Carbon::parse($startDate)->format('d/m/Y').' - '.Carbon::parse($endDate)->format('d/m/Y') : 
+                            'Todos los registros'
+                    ],
+                    'usuarios_mas_activos' => $usuariosMasActivos,
+                    'tiempo_promedio_por_rol' => $tiempoPorRol,
+                    'detalle_usuarios' => array_values($usuarios)
+                ]
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error en ReporteUsuariosController: ' . $e->getMessage());
+            \Log::error('Error en ReporteUsuariosController: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Ha ocurrido un error al procesar la solicitud',
-                'message' => $e->getMessage()
+                'success' => false,
+                'message' => 'Error al generar el reporte',
+                'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    protected function procesarUsuarios($solicitudes)
+    {
+        $usuarios = [];
+
+        foreach ($solicitudes as $solicitud) {
+            // Procesar alumno
+            if ($solicitud->usuarioAlumno) {
+                $this->procesarUsuario($usuarios, $solicitud->usuarioAlumno, $solicitud, 'Alumno');
+            }
+
+            // Procesar coordinador
+            if ($solicitud->usuarioCoordinador) {
+                $this->procesarUsuario($usuarios, $solicitud->usuarioCoordinador, $solicitud, 'Coordinador');
+            }
+
+            // Procesar administrador
+            if ($solicitud->usuarioAdministrador) {
+                $this->procesarUsuario($usuarios, $solicitud->usuarioAdministrador, $solicitud, 'Administrador');
+            }
+        }
+
+        return $usuarios;
+    }
+
+    protected function procesarUsuario(&$usuarios, $usuario, $solicitud, $rol)
+    {
+        $id = $usuario->id_usuario;
+
+        if (!isset($usuarios[$id])) {
+            $usuarios[$id] = [
+                'id_usuario' => $id,
+                'nombre_completo' => trim($usuario->nombre . ' ' . $usuario->apellidos),
+                'rol' => $rol,
+                'total_actividades' => 0,
+                'tiempo_promedio' => 0,
+                'tiempos' => []
+            ];
+        }
+
+        $usuarios[$id]['total_actividades']++;
+
+        if ($solicitud->fecha_respuesta) {
+            $tiempo = Carbon::parse($solicitud->fecha_solicitud)
+                ->diffInHours(Carbon::parse($solicitud->fecha_respuesta));
+            $usuarios[$id]['tiempos'][] = $tiempo;
+            $usuarios[$id]['tiempo_promedio'] = array_sum($usuarios[$id]['tiempos']) / count($usuarios[$id]['tiempos']);
         }
     }
 
     public function downloadPDF(Request $request)
     {
-        $data = $this->index($request)->getData();
+        try {
+            $response = $this->index($request);
+            $data = $response->getData();
 
-        $pdf = Pdf::loadView('reportes.usuarios', compact('data'));
-        return $pdf->download('reporte_usuarios.pdf');
+            if (!$data->success) {
+                throw new \Exception($data->message ?? 'Error al generar el reporte');
+            }
+
+            $pdf = Pdf::loadView('reportes.usuarios', [
+                'resumen' => (array)$data->data->resumen,
+                'usuarios_mas_activos' => $data->data->usuarios_mas_activos,
+                'tiempo_promedio_por_rol' => (array)$data->data->tiempo_promedio_por_rol,
+                'detalle' => $data->data->detalle_usuarios
+            ]);
+
+            $fileName = 'reporte_incidencias_' . now()->format('Ymd_His') . '.pdf';
+
+            return $pdf->download($fileName);
+
+        } catch (\Exception $e) {
+            \Log::error('Error al generar PDF: ' . $e->getMessage());
+            return back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
+        }
     }
 }

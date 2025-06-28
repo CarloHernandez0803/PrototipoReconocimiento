@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Incidencia;
-use App\Models\ResolucionIncidencia;
+use App\Models\Resolucion;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
+use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReporteIncidenciasController extends Controller
@@ -17,72 +18,183 @@ class ReporteIncidenciasController extends Controller
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
 
-            $query = Incidencia::query()
+            // Base query para incidencias con relaciones
+            $query = Incidencia::with(['resolucion', 'usuarioCoordinador'])
                 ->select([
-                    'Incidencias.tipo_experiencia',
-                    DB::raw('COUNT(*) as total'),
-                    DB::raw('AVG(TIMESTAMPDIFF(HOUR, Incidencias.fecha_reporte, Resolucion_Incidencias.fecha_resolucion)) as tiempo_promedio'),
-                    'Resolucion_Incidencias.estado as estado_resolucion',
-                    DB::raw('CONCAT(u1.nombre, " ", u1.apellidos) as reportado_por')
+                    'incidencias.*',
+                    DB::raw('CONCAT(usuarios.nombre, " ", usuarios.apellidos) as coordinador_nombre')
                 ])
-                ->leftJoin('Resolucion_Incidencias', 'Incidencias.id_incidencia', '=', 'Resolucion_Incidencias.incidencia')
-                ->leftJoin('Usuarios as u1', 'Incidencias.coordinador', '=', 'u1.id_usuario');
+                ->leftJoin('usuarios', 'incidencias.coordinador', '=', 'usuarios.id_usuario');
 
+            // Aplicar filtros de fecha si existen
             if ($startDate && $endDate) {
-                $query->whereBetween('Incidencias.fecha_reporte', [
-                    date('Y-m-d 00:00:00', strtotime($startDate)),
-                    date('Y-m-d 23:59:59', strtotime($endDate))
+                $query->whereBetween('incidencias.fecha_reporte', [
+                    Carbon::parse($startDate)->startOfDay(),
+                    Carbon::parse($endDate)->endOfDay()
                 ]);
             }
 
-            $incidencias = $query
-                ->groupBy('Incidencias.tipo_experiencia', 'Resolucion_Incidencias.estado', 'u1.nombre', 'u1.apellidos')
-                ->get();
-
-            $totalIncidencias = $incidencias->sum('total');
-            $incidenciasResueltas = $incidencias->where('estado_resolucion', 'Resuelto')->sum('total');
-            $porcentajeResueltas = $totalIncidencias > 0 ? ($incidenciasResueltas / $totalIncidencias) * 100 : 0;
-
-            $incidenciasFrecuentes = $incidencias
-                ->groupBy('tipo_experiencia')
-                ->map(function ($group) {
-                    return $group->sum('total');
+            // Obtener datos agrupados por tipo y coordinador
+            $incidenciasAgrupadas = $query->get()
+                ->groupBy(['tipo_experiencia', 'coordinador'])
+                ->map(function ($tipos, $tipo) {
+                    return $tipos->map(function ($coordinadores, $coordinadorId) use ($tipo) {
+                        $first = $coordinadores->first();
+                        return [
+                            'tipo_experiencia' => $tipo,
+                            'total' => $coordinadores->count(),
+                            'coordinador_nombre' => $first->coordinador_nombre ?? 'Desconocido',
+                            'estado' => $coordinadores->every(function ($item) {
+                                return optional($item->resolucion)->estado === 'Resuelto';
+                            }) ? 'Resuelto' : 'Pendiente',
+                            'tiempo_promedio' => $coordinadores->avg(function ($item) {
+                                if ($item->resolucion && $item->resolucion->fecha_resolucion) {
+                                    return Carbon::parse($item->fecha_reporte)
+                                        ->diffInHours(Carbon::parse($item->resolucion->fecha_resolucion));
+                                }
+                                return null;
+                            })
+                        ];
+                    });
                 })
-                ->sortDesc()
-                ->take(5);
+                ->flatten(1);
 
-            $tiempoPromedioPorTipo = $incidencias
-                ->groupBy('tipo_experiencia')
-                ->map(function ($group) {
-                    return $group->avg('tiempo_promedio');
-                });
+            // Calcular métricas del resumen
+            $resumen = [
+                'total_incidencias' => $incidenciasAgrupadas->sum('total'),
+                'incidencias_resueltas' => $incidenciasAgrupadas->where('estado', 'Resuelto')->sum('total'),
+                'porcentaje_resueltas' => $incidenciasAgrupadas->sum('total') > 0 ? 
+                    ($incidenciasAgrupadas->where('estado', 'Resuelto')->sum('total') / $incidenciasAgrupadas->sum('total')) * 100 : 0,
+                'tiempo_promedio_resolucion' => $incidenciasAgrupadas->where('estado', 'Resuelto')
+                    ->avg('tiempo_promedio')
+            ];
 
             return response()->json([
-                'resumen' => [
-                    'total_incidencias' => $totalIncidencias,
-                    'incidencias_resueltas' => $incidenciasResueltas,
-                    'porcentaje_resueltas' => round($porcentajeResueltas, 2),
-                    'tiempo_promedio_resolucion' => $incidencias->avg('tiempo_promedio'),
-                ],
-                'incidencias_frecuentes' => $incidenciasFrecuentes,
-                'tiempo_promedio_por_tipo' => $tiempoPromedioPorTipo,
-                'detalle_incidencias' => $incidencias,
+                'success' => true,
+                'data' => [
+                    'resumen' => $resumen,
+                    'detalle' => $incidenciasAgrupadas->values()
+                ]
             ]);
 
         } catch (\Exception $e) {
             \Log::error('Error en ReporteIncidenciasController: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Error al procesar el reporte de incidencias',
-                'message' => $e->getMessage()
+                'success' => false,
+                'message' => 'Error al generar el reporte',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
 
     public function downloadPDF(Request $request)
     {
-        $data = $this->index($request)->getData();
+        try {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
 
-        $pdf = Pdf::loadView('reportes.incidencias', compact('data'));
-        return $pdf->download('reporte_incidencias.pdf');
+            // Base query para incidencias con relaciones
+            $query = Incidencia::with(['resolucion', 'usuarioCoordinador'])
+                ->select([
+                    'incidencias.*',
+                    DB::raw('CONCAT(usuarios.nombre, " ", usuarios.apellidos) as coordinador_nombre')
+                ])
+                ->leftJoin('usuarios', 'incidencias.coordinador', '=', 'usuarios.id_usuario');
+
+            // Aplicar filtros de fecha si existen
+            if ($startDate && $endDate) {
+                $query->whereBetween('incidencias.fecha_reporte', [
+                    Carbon::parse($startDate)->startOfDay(),
+                    Carbon::parse($endDate)->endOfDay()
+                ]);
+            }
+
+            // Obtener todos los registros (sin agrupar aún)
+            $incidencias = $query->get();
+
+            // Agrupar por tipo y coordinador para el detalle
+            $incidenciasAgrupadas = $incidencias
+                ->groupBy(['tipo_experiencia', 'coordinador'])
+                ->map(function ($tipos, $tipo) {
+                    return $tipos->map(function ($coordinadores, $coordinadorId) use ($tipo) {
+                        $first = $coordinadores->first();
+                        return [
+                            'tipo_experiencia' => $tipo,
+                            'total' => $coordinadores->count(),
+                            'coordinador_nombre' => $first->coordinador_nombre ?? 'Desconocido',
+                            'estado' => $coordinadores->every(function ($item) {
+                                return optional($item->resolucion)->estado === 'Resuelto';
+                            }) ? 'Resuelto' : 'Pendiente',
+                            'tiempo_promedio' => $coordinadores->avg(function ($item) {
+                                if ($item->resolucion && $item->resolucion->fecha_resolucion) {
+                                    return Carbon::parse($item->fecha_reporte)
+                                        ->diffInHours(Carbon::parse($item->resolucion->fecha_resolucion));
+                                }
+                                return null;
+                            })
+                        ];
+                    });
+                })
+                ->flatten(1);
+
+            // Calcular métricas del resumen
+            $resumen = [
+                'total_incidencias' => $incidencias->count(),
+                'incidencias_resueltas' => $incidencias->filter(function($item) {
+                    return optional($item->resolucion)->estado === 'Resuelto';
+                })->count(),
+                'porcentaje_resueltas' => $incidencias->count() > 0 ? 
+                    ($incidencias->filter(function($item) {
+                        return optional($item->resolucion)->estado === 'Resuelto';
+                    })->count() / $incidencias->count()) * 100 : 0,
+                'tiempo_promedio_resolucion' => $incidencias->filter(function($item) {
+                    return optional($item->resolucion)->estado === 'Resuelto';
+                })->avg(function($item) {
+                    if ($item->resolucion && $item->resolucion->fecha_resolucion) {
+                        return Carbon::parse($item->fecha_reporte)
+                            ->diffInHours(Carbon::parse($item->resolucion->fecha_resolucion));
+                    }
+                    return null;
+                }),
+                'rango_fechas' => $startDate && $endDate ? 
+                    Carbon::parse($startDate)->format('d/m/Y') . ' - ' . Carbon::parse($endDate)->format('d/m/Y') : 
+                    'Todos los registros'
+            ];
+
+            // Calcular incidencias más frecuentes (top 5)
+            $incidenciasFrecuentes = $incidencias
+                ->groupBy('tipo_experiencia')
+                ->map->count()
+                ->sortDesc()
+                ->take(5);
+
+            // Calcular tiempos por tipo
+            $tiemposPorTipo = $incidencias
+                ->groupBy('tipo_experiencia')
+                ->map(function($items) {
+                    return $items->avg(function($item) {
+                        if ($item->resolucion && $item->resolucion->fecha_resolucion) {
+                            return Carbon::parse($item->fecha_reporte)
+                                ->diffInHours(Carbon::parse($item->resolucion->fecha_resolucion));
+                        }
+                        return null;
+                    });
+                });
+
+            $pdf = Pdf::loadView('reportes.incidencias', [
+                'resumen' => $resumen,
+                'detalle' => $incidenciasAgrupadas->values(),
+                'incidenciasFrecuentes' => $incidenciasFrecuentes,
+                'tiemposPorTipo' => $tiemposPorTipo
+            ]);
+
+            $fileName = 'reporte_incidencias_' . now()->format('Ymd_His') . '.pdf';
+
+            return $pdf->download($fileName);
+
+        } catch (\Exception $e) {
+            \Log::error('Error al generar PDF: ' . $e->getMessage());
+            return back()->with('error', 'Error al generar el PDF: ' . $e->getMessage());
+        }
     }
 }
