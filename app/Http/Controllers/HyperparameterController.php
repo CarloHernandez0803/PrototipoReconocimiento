@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Jobs\TrainCnnJob;
 use App\Models\Historial;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\Models\SenEntrenamiento;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class HyperparameterController extends Controller
 {
     public function index()
     {
-        $historial = Historial::latest()->paginate(10);
+        $historial = Historial::orderBy('fecha_creacion', 'desc')->paginate(10);
         return view('hyperparameters.index', compact('historial'));
     }
 
     public function create()
     {
-        $lotes = SenEntrenamiento::all();
+        $lotes = SenEntrenamiento::all(); 
         return view('hyperparameters.create', compact('lotes'));
     }
 
@@ -29,8 +29,8 @@ class HyperparameterController extends Controller
             'altura' => 'required|integer|min:32|max:256',
             'anchura' => 'required|integer|min:32|max:256',
             'batch_size' => 'required|integer|min:1|max:64',
-            'pasos' => 'required|integer|min:10|max:1000',
             'clases' => 'required|integer|min:2|max:20',
+            'learning_rate' => 'required|numeric|between:0.0001,0.1',
             'rescale' => 'required|numeric|between:0.001,1',
             'zoom_range' => 'required|numeric|between:0,0.5',
             'horizontal_flip' => 'required|boolean',
@@ -41,53 +41,81 @@ class HyperparameterController extends Controller
             'dropout_rate' => 'required|numeric|between:0.1,0.9',
         ]);
 
-        try {
-            // Eliminar modelo anterior si existe
-            Storage::disk('ftp')->delete(['modelo.cnn', 'pesos.cnn']);
+        $validated['epocas'] = (int)$validated['epocas'];
+        $validated['altura'] = (int)$validated['altura'];
+        $validated['anchura'] = (int)$validated['anchura'];
+        $validated['batch_size'] = (int)$validated['batch_size'];
+        $validated['clases'] = (int)$validated['clases'];
+        $validated['kernels1'] = (int)$validated['kernels1'];
+        $validated['kernels2'] = (int)$validated['kernels2'];
+        $validated['kernels3'] = (int)$validated['kernels3'];
+        
+        $validated['learning_rate'] = (float)$validated['learning_rate'];
+        $validated['rescale'] = (float)$validated['rescale'];
+        $validated['zoom_range'] = (float)$validated['zoom_range'];
+        $validated['dropout_rate'] = (float)$validated['dropout_rate'];
 
-            // Ejecutar entrenamiento
-            $process = new Process([
-                'C:\ProgramData\anaconda3\envs\prototipo_cnn\python.exe',
-                base_path('scripts/train_cnn.py'),
-                json_encode($validated)
-            ]);
-            $process->setTimeout(3600); // 1 hora
+        // Los booleanos a veces llegan como '1' o '0', los convertimos
+        $validated['horizontal_flip'] = filter_var($validated['horizontal_flip'], FILTER_VALIDATE_BOOLEAN);
+        $validated['vertical_flip'] = filter_var($validated['vertical_flip'], FILTER_VALIDATE_BOOLEAN);
+        
+        // Creamos el historial sin la columna 'estado'
+        $historial = Historial::create([
+            'hiperparametros' => json_encode($validated),
+            'modelo' => 'pendiente',
+            'pesos' => 'pendiente',
+            'acierto' => 0,
+            'perdida' => 0,
+            'tiempo_entrenamiento' => 0,
+            'usuario' => auth()->id(),
+        ]);
 
-            $output = '';
-            $process->run(function ($type, $buffer) use (&$output) {
-                $output .= $buffer;
-                logger()->info($buffer); // Registrar en logs de Laravel
-            });
+        TrainCnnJob::dispatch($historial, $validated);
 
-            if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            }
-
-            $result = json_decode($process->getOutput(), true);
-
-            // Registrar en historial
-            Historial::create([
-                'hiperparametros' => json_encode($validated),
-                'modelo' => 'modelo.cnn',
-                'pesos' => 'pesos.cnn',
-                'acierto' => $result['accuracy'],
-                'perdida' => $result['loss'],
-                'tiempo_entrenamiento' => $result['training_time'] ?? null,
-                'user_id' => auth()->id()
-            ]);
-
-            return redirect()->route('hyperparameters.index')
-                ->with('success', 'Modelo entrenado y guardado correctamente');
-
-        } catch (\Exception $e) {
-            return back()->withInput()
-                ->withErrors(['error' => 'Error en el entrenamiento: '.$e->getMessage()]);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'El entrenamiento ha sido encolado y comenzará en breve.',
+            'training_id' => $historial->id_historial
+        ]);
     }
 
     public function show($id)
     {
         $historial = Historial::findOrFail($id);
         return view('hyperparameters.show', compact('historial'));
+    }
+
+    public function checkProgress(Request $request)
+    {
+        $request->validate(['training_id' => 'required|integer']);
+        $trainingId = $request->training_id;
+
+        $progressFile = storage_path('app/training_progress_' . $trainingId . '.json');
+
+        if (!File::exists($progressFile)) {
+            return response()->json(['status' => 'pending', 'message' => 'Esperando a que el trabajador inicie la tarea...'], 202);
+        }
+
+        $progress = json_decode(File::get($progressFile), true);
+        
+        // Si el entrenamiento terminó, actualizamos la BD
+        if (in_array($progress['status'], ['completed', 'error'])) {
+            $historial = Historial::findOrFail($trainingId);
+            
+            // Ya no verificamos el estado, solo actualizamos si el modelo aún está 'pendiente'
+            if ($historial->modelo === 'pendiente') {
+                if ($progress['status'] === 'completed') {
+                    $historial->update([
+                        'modelo' => $progress['model_file'] ?? 'N/A',
+                        'pesos' => $progress['weights_file'] ?? 'N/A',
+                        'acierto' => ($progress['accuracy'] ?? 0) * 100,
+                        'perdida' => $progress['loss'] ?? 0,
+                        'tiempo_entrenamiento' => $progress['training_time'] ?? 0,
+                    ]);
+                }
+            }
+        }
+        
+        return response()->json($progress);
     }
 }

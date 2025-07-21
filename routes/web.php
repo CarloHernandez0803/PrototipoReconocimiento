@@ -36,6 +36,10 @@ Route::middleware(['web'])->group(function () {
     //Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    Route::get('/test-python', function () {
+        return shell_exec('C:\Users\carlo\AppData\Local\Microsoft\WindowsApps\python3.exe -c "print(\'Python funciona\')"');
+    });
+
     // Rutas protegidas por autenticación
     Route::middleware(['auth','verificar.sesion', 'verificar.inactividad'])->group(function () {
         Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
@@ -78,6 +82,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('/reportes/experiencias/excel', [ReporteExperienciasController::class, 'downloadExcel']);
         Route::get('/reportes/recursos/excel', [ReporteRecursosController::class, 'downloadExcel']);
         Route::get('/reportes/solicitudes/excel', [ReporteSolicitudesController::class, 'downloadExcel']);
+        Route::get('/hyperparameters/check-progress', [HyperparameterController::class, 'checkProgress'])->name('hyperparameters.checkProgress');
         Route::resource('hyperparameters', HyperparameterController::class)->only(['index', 'create', 'store', 'show']);
         Route::get('/modulo_prueba', [ModuloPrueba::class, 'index'])->name('modulo_prueba.index');
         Route::get('/modulo_prueba/classify/{image}', [ModuloPrueba::class, 'classify'])->name('modulo_prueba.classify');
