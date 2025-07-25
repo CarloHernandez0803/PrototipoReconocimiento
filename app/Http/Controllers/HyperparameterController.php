@@ -85,6 +85,12 @@ class HyperparameterController extends Controller
         return view('hyperparameters.show', compact('historial'));
     }
 
+    /**
+     * Verificamos el estado del entrenamiento y actualizamos la BD
+     * 
+     * @param Request $request Recibe el id del entrenamiento a verificar
+     * @return \Illuminate\Http\JsonResponse Actualiza la BD con el estado del entrenamiento y devuelve un JSON
+     */
     public function checkProgress(Request $request)
     {
         $request->validate(['training_id' => 'required|integer']);

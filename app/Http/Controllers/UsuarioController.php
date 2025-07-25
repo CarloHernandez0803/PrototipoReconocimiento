@@ -23,6 +23,7 @@ class UsuarioController extends Controller
 
     public function store(Request $request)
     {
+        //Se reciben y validan los datos recibidos desde el formulario
         $validated = $request->validate([
             'nombre' => 'required|max:45',
             'apellidos' => 'required|max:60',
@@ -36,14 +37,18 @@ class UsuarioController extends Controller
             'rol' => 'required|in:Administrador,Coordinador,Alumno',
         ]);
 
+        //Se encripta la contraseña recibida desde el formulario y se almacena en la base de datos
         $validated['contraseña'] = Hash::make($validated['password']);
 
+        //Se realiza la transacción para crear el usuario en la base de datos
         $usuario = \DB::transaction(function () use ($validated) {
             return Usuario::create($validated);
         });
 
+        // Se enviara un correo con la informacion del usuario creado
         event(new UsuarioCreado($usuario));
 
+        //Se redirige al listado de usuarios
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente');
     }
 

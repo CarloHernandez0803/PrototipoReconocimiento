@@ -12,30 +12,38 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
+    // Rutas protegidas por autenticación 
     public function showLogin()
     {
-        return view('auth.login');
+        return view('auth.login'); // Ruta a la vista de inicio de sesión
     }
 
+    // Ruta para iniciar sesión
     public function login(Request $request)
     {
+        // Validar los datos de inicio de sesión
         $credentials = $request->validate([
             'correo' => 'required|email',
             'contraseña' => 'required',
         ]);
 
+        // Iniciar sesión
         $usuario = Usuario::where('correo', $request->correo)->first();  
 
+        // Verificar que el usuario exista
         if (!$usuario) {
             return back()->withErrors(['correo' => 'Usuario no encontrado.']);
         }
 
+        // Verificar la contraseña
         if (!Hash::check($request->contraseña, $usuario->contraseña)) {
             return back()->withErrors(['contraseña' => 'La contraseña proporcionada es incorrecta.']);
         }
 
+        // Iniciar sesión
         Auth::login($usuario);
 
+        // Redirigir a la vista correspondiente basado en el rol
         return $this->redirectBasedOnRole($usuario->rol);
     }
 

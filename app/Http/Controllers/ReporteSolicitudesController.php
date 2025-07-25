@@ -21,11 +21,14 @@ class ReporteSolicitudesController extends Controller
 {
     public function index(Request $request)
     {
+        // Filtrar por fechas si existen
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
+        // Consulta para obtener la cantidad de solicitudes por estado
         $query = Solicitud::query();
 
+        // Aplicar filtros de fecha si existen
         if ($startDate && $endDate) {
             $query->whereBetween('fecha_solicitud', [
                 Carbon::parse($startDate)->startOfDay(),
@@ -33,11 +36,12 @@ class ReporteSolicitudesController extends Controller
             ]);
         }
 
+        // Obtener la cantidad de solicitudes por estado y agruparlas por estado
         $solicitudes = $query->selectRaw('estado, COUNT(*) as total')
             ->groupBy('estado')
             ->get();
 
-        // Colores para cada estado (puedes personalizarlos)
+        // Definir colores para cada estado en el gráfico
         $backgroundColors = [
             'Pendiente' => 'rgba(255, 206, 86, 0.5)',
             'Aprobado' => 'rgba(75, 192, 192, 0.5)',
@@ -45,6 +49,7 @@ class ReporteSolicitudesController extends Controller
             'Completado' => 'rgba(54, 162, 235, 0.5)',
         ];
 
+        // Definir colores de borde para cada estado en el gráfico
         $borderColors = [
             'Pendiente' => 'rgba(255, 206, 86, 1)',
             'Aprobado' => 'rgba(75, 192, 192, 1)',

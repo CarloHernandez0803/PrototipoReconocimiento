@@ -85,6 +85,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('/hyperparameters/check-progress', [HyperparameterController::class, 'checkProgress'])->name('hyperparameters.checkProgress');
         Route::resource('hyperparameters', HyperparameterController::class)->only(['index', 'create', 'store', 'show']);
         Route::get('/modulo_prueba', [ModuloPrueba::class, 'index'])->name('modulo_prueba.index');
-        Route::get('/modulo_prueba/classify/{image}', [ModuloPrueba::class, 'classify'])->name('modulo_prueba.classify');
+        Route::post('/modulo_prueba/classify', [ModuloPrueba::class, 'classify'])->name('modulo_prueba.classify');
+        Route::get('/modulo_prueba/check-status/{id}', [ModuloPrueba::class, 'checkStatus'])->name('modulo_prueba.checkStatus');
     });
 });

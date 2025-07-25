@@ -11,10 +11,10 @@ class ReporteIncidenciasService
 {
     public function generarReporte($startDate = null, $endDate = null)
     {
-        // Validar y formatear fechas
+        // Validar y formatear fechas de inicio y fin de rango de fechas
         $fechas = $this->validarFechas($startDate, $endDate);
 
-        // Obtener datos base
+        // Obtener datos de incidencias con resoluciones y coordinadores relacionados en una sola consulta de base de datos
         $query = Incidencia::query()
             ->select([
                 'Incidencias.id_incidencia',
@@ -35,6 +35,7 @@ class ReporteIncidenciasService
             ]);
         }
 
+        // Ejecutar consulta y obtener resultados
         $incidencias = $query->get();
 
         // Procesar datos
