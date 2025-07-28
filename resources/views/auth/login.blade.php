@@ -6,6 +6,12 @@
 
         <x-validation-errors class="mb-4" />
 
+        @if (session('error'))
+            <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
+        
         @session('status')
             <div class="mb-4 font-medium text-sm text-green-600">
                 {{ session('status') }}
@@ -26,7 +32,7 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <x-button class="ms-4">
+                <x-button class="ms-4 bg-purple-900">
                     {{ __('Iniciar sesión') }}
                 </x-button>
             </div>

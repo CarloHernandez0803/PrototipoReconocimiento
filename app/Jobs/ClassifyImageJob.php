@@ -36,10 +36,7 @@ class ClassifyImageJob implements ShouldQueue
         }
         
         $historial = Historial::findOrFail($jobData['historial_id']);
-        $logFile = storage_path('logs/classify_job_' . $this->classificationId . '.log');
         $paramsFile = storage_path('logs/' . $this->classificationId . '_params.json');
-        
-        // Usar la ruta absoluta desde la carpeta 'public'
         $ruta_imagen_absoluta = public_path($jobData['imagen_path']);
 
         try {
@@ -53,7 +50,6 @@ class ClassifyImageJob implements ShouldQueue
                 '--params_file', $paramsFile,
                 '--weights_path', $ruta_pesos,
                 '--image_path', $ruta_imagen_absoluta,
-                '--log_file', $logFile,
             ];
 
             $process = new Process($arguments);
@@ -62,21 +58,19 @@ class ClassifyImageJob implements ShouldQueue
             $process->run();
 
             if (!$process->isSuccessful()) {
-                $error_from_log = File::exists($logFile) ? File::get($logFile) : 'No se pudo generar el log.';
-                throw new \RuntimeException('Error en script de Python. Log: ' . $error_from_log);
+                throw new \RuntimeException('Error en script de Python: ' . $process->getErrorOutput());
             }
 
             $output = $process->getOutput();
             $resultado = json_decode($output, true);
 
             if ($resultado === null) {
-                throw new \RuntimeException("La salida del script de Python no fue un JSON válido. Salida recibida: '{$output}'");
+                throw new \RuntimeException("La salida del script no fue un JSON válido. Salida: '{$output}'");
             }
             if (isset($resultado['error'])) {
                 throw new \RuntimeException('Script de Python devolvió un error: ' . $resultado['error']);
             }
 
-            // Actualizar la caché con el resultado
             $jobData['estado'] = 'completado';
             $jobData['resultado'] = $resultado;
             Cache::put($this->classificationId, $jobData, now()->addMinutes(10));

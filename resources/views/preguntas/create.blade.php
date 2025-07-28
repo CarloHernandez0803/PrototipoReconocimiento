@@ -37,6 +37,9 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-4">
+                    <a href="{{ route('preguntas.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+                        {{ __('Cancelar') }}
+                    </a>
                     <x-button class="ms-4 bg-purple-900">
                         {{ __('Registrar') }}
                     </x-button>

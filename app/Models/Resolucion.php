@@ -16,9 +16,11 @@ class Resolucion extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'estado',
-        'fecha_resolucion',
         'incidencia',
+        'id_administrador',
+        'estado',
+        'comentario',
+        'fecha_resolucion',
     ];
 
     protected $casts = [
@@ -30,8 +32,8 @@ class Resolucion extends Model
         return $this->belongsTo(Incidencia::class, 'incidencia', 'id_incidencia');
     }
 
-    public function usuarioResolucion()
+    public function administrador()
     {
-        return $this->belongsTo(Usuario::class, 'usuario_resolucion', 'id_usuario');
+        return $this->belongsTo(Usuario::class, 'id_administrador', 'id_usuario');
     }
 }

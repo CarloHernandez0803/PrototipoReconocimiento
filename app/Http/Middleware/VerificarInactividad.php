@@ -5,25 +5,37 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class VerificarInactividad
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        $timeout = config('session.lifetime') * 60;
+        // Tiempo de inactividad en minutos
+        $timeout = 20;
 
-        if ($request->session()->has('last_activity')) {
-            $lastActivity = $request->session()->get('last_activity');
-            $inactiveTime = time() - $lastActivity;
+        // Ignorar esta verificación en la página de login para evitar bucles de redirección
+        if ($request->routeIs('login')) {
+            return $next($request);
+        }
 
-            if ($inactiveTime > $timeout) {
-                Auth::logout(); 
-                $request->session()->flush(); 
-                return redirect('/login')->withErrors(['error' => 'Tu sesión ha expirado por inactividad.']);
+        // Verificar si el usuario está autenticado y si la sesión tiene una marca de tiempo
+        if (Auth::check() && session('last_activity')) {
+            $tiempoDeInactividad = time() - session('last_activity');
+
+            // Si el tiempo de inactividad supera el límite (convertido a segundos)
+            if ($tiempoDeInactividad > ($timeout * 60)) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')
+                             ->with('error', 'Tu sesión ha expirado por inactividad.');
             }
         }
 
-        $request->session()->put('last_activity', time());
+        // Actualizar la marca de tiempo de la última actividad en la sesión
+        session(['last_activity' => time()]);
 
         return $next($request);
     }

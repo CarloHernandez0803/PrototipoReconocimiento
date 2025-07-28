@@ -1,14 +1,16 @@
 <x-mail::message>
 # Actualización en el Seguimiento del Fallo Reportado
 
-El estado del fallo reportado ha sido actualizado con los siguientes detalles:
+La incidencia **#{{ $resolucion->incidenciaRegistrada->id_incidencia }}** ha sido actualizada.
 
-- **ID de Resolución:** {{ $resolucion->id_resolucion }}
-- **Estado Actual:** {{ $resolucion->estado }}
-- **Fecha de Resolución:** {{ $resolucion->fecha_resolucion }}
+- **Nuevo Estado:** {{ $resolucion->estado }}
+- **Fecha de Actualización:** {{ $resolucion->fecha_resolucion->format('d/m/Y H:i') }}
 
-<x-mail::button :url="url('/incidencias')">
-Ver Seguimiento
+**Comentarios del Administrador:**
+{{ $resolucion->comentario }}
+
+<x-mail::button :url="route('incidencias.show', $resolucion->incidencia)">
+Ver Incidencia
 </x-mail::button>
 
 Gracias,<br>

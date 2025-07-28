@@ -10,8 +10,7 @@
             <div class="mt-5 md:mt-0 md:col-span-2">
                 <form method="post" action="{{ route('usuarios.update', $usuario->id_usuario) }}">
                     @csrf
-                    @method('put')
-                    <div class="shadow overflow-hidden sm:rounded-md">
+                    @method('PUT') <div class="shadow overflow-hidden sm:rounded-md">
                         <div class="px-4 py-5 bg-white sm:p-6">
                             <label for="nombre" class="block font-medium text-sm text-gray-700">{{ __('Nombre') }}</label>
                             <input type="text" name="nombre" id="nombre" class="form-input rounded-md shadow-sm mt-1 block w-full"
@@ -40,11 +39,21 @@
                         </div>
 
                         <div class="px-4 py-5 bg-white sm:p-6">
-                            <label for="contraseña" class="block font-medium text-sm text-gray-700">{{ __('Contraseña') }}</label>
-                            <input type="password" name="contraseña" id="contraseña" class="form-input rounded-md shadow-sm mt-1 block w-full" />
-                            @error('contraseña')
-                                <p class="text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <label for="password" class="block font-medium text-sm text-gray-700">{{ __('Nueva Contraseña (Opcional)') }}</label>
+                            <input type="password" name="password" id="password" class="form-input rounded-md shadow-sm mt-1 block w-full" />
+                            <p class="text-xs text-gray-500 mt-1">Dejar en blanco para no cambiar la contraseña actual.</p>
+                            @if ($errors->has('password'))
+                                <div class="mt-2 space-y-1">
+                                    @foreach ($errors->get('password') as $error)
+                                        <p class="text-sm text-red-600">{{ $error }}</p>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="px-4 py-5 bg-white sm:p-6">
+                             <label for="password_confirmation" class="block font-medium text-sm text-gray-700">{{ __('Confirmar Nueva Contraseña') }}</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-input rounded-md shadow-sm mt-1 block w-full" />
                         </div>
 
                         <div class="px-4 py-5 bg-white sm:p-6">
@@ -66,10 +75,10 @@
                         </div>
 
                         <div class="flex items-center justify-end px-4 py-3 bg-gray-50 text-right sm:px-6">
-                            <a href="{{ route('usuarios.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+                            <a href="{{ route('usuarios.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border rounded-md font-semibold text-xs text-gray-800 uppercase hover:bg-gray-400">
                                 {{ __('Cancelar') }}
                             </a>
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-purple-900 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-purple-900 border rounded-md font-semibold text-xs text-white uppercase hover:bg-purple-800">
                                 {{ __('Actualizar') }}
                             </button>
                         </div>

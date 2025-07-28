@@ -13,7 +13,7 @@ class IncidenciaController extends Controller
 {
     public function index()
     {
-        $incidencias = Incidencia::with('resolucion')->paginate(10);
+        $incidencias = Incidencia::with('resoluciones')->paginate(10);
         return view('incidencias.index', compact('incidencias'));
     }
 
@@ -30,7 +30,8 @@ class IncidenciaController extends Controller
         ]);
 
         $incidencia = Incidencia::create([
-            ...$validated,
+            'tipo_incidencia' => $validated['tipo_incidencia'],
+            'descripcion' => $validated['descripcion'],
             'coordinador' => Auth::id(),
         ]);
 
@@ -41,7 +42,7 @@ class IncidenciaController extends Controller
 
     public function show(string $id)
     {
-        $incidencia = Incidencia::with('resolucion')->findOrFail($id);
+        $incidencia = Incidencia::with('resoluciones')->findOrFail($id);
         return view('incidencias.show', compact('incidencia'));
     }
 
@@ -56,8 +57,8 @@ class IncidenciaController extends Controller
         $incidencia = Incidencia::findOrFail($id);
         
         $validated = $request->validate([
-            'tipo_experiencia' => 'nullable|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
-            'descripcion' => 'nullable|string',
+            'tipo_experiencia' => 'required|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
+            'descripcion' => 'required|string',
         ]);
 
         $incidencia->update($validated);
@@ -75,7 +76,7 @@ class IncidenciaController extends Controller
 
     public function timeline()
     {
-        $incidencias = Incidencia::with(['resolucion'])->paginate(10);
+        $incidencias = Incidencia::with(['resoluciones'])->paginate(10);
         return view('incidencias.timeline', compact('incidencias'));
     }
 }

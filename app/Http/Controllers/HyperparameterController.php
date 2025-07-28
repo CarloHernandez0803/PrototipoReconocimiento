@@ -16,12 +16,6 @@ class HyperparameterController extends Controller
         return view('hyperparameters.index', compact('historial'));
     }
 
-    public function create()
-    {
-        $lotes = SenEntrenamiento::all(); 
-        return view('hyperparameters.create', compact('lotes'));
-    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([

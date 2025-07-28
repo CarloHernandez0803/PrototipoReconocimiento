@@ -37,9 +37,13 @@
                 <div class="mt-4">
                     <x-label for="password" value="{{ __('Contraseña') }}" />
                     <x-input id="password" class="block mt-1 w-full" type="password" name="password" required />
-                    @error('password')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
+                    @if ($errors->has('password'))
+                        <div class="mt-2 space-y-1">
+                            @foreach ($errors->get('password') as $error)
+                                <p class="text-sm text-red-600">{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
 
                 <div class="mt-4">
@@ -60,6 +64,9 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-4">
+                    <a href="{{ route('usuarios.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+                        {{ __('Cancelar') }}
+                    </a>
                     <x-button class="ms-4 bg-purple-900">
                         {{ __('Registrar') }}
                     </x-button>

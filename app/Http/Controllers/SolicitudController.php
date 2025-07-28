@@ -14,14 +14,11 @@ class SolicitudController extends Controller
     public function index()
     {
         $user = Auth::user();
-
         if ($user->rol === 'Administrador') {
             $solicitudes = Solicitud::paginate(10);
-        }
-        else {
+        } else {
             $solicitudes = Solicitud::where('coordinador', $user->id_usuario)->paginate(10);
         }
-        
         return view('solicitudes.index', compact('solicitudes'));
     }
 
@@ -34,10 +31,10 @@ class SolicitudController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        
+
         $validated = $request->validate([
             'fecha_solicitud' => 'required|date',
-            'alumno' => 'required|exists:Usuarios,id_usuario', // Verifica que el alumno exista
+            'alumno' => 'required|exists:Usuarios,id_usuario',
         ]);
 
         $validated['estado'] = 'Pendiente';
@@ -47,7 +44,7 @@ class SolicitudController extends Controller
 
         event(new SolicitudPruebaRecibida($solicitud));
 
-        return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba creado exitosamente');
+        return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba creada exitosamente');
     }
 
     public function show(string $id)
@@ -55,7 +52,7 @@ class SolicitudController extends Controller
         $solicitud = Solicitud::findOrFail($id);
         return view('solicitudes.show', compact('solicitud'));
     }
-
+    
     public function edit(string $id)
     {
         $solicitud = Solicitud::findOrFail($id);
@@ -68,38 +65,46 @@ class SolicitudController extends Controller
         $solicitud = Solicitud::findOrFail($id);
         $user = Auth::user();
         
+        $dataToUpdate = [];
+
+        if ($user->rol === 'Coordinador' && $user->id_usuario === $solicitud->coordinador) {
+            $validated = $request->validate([
+                'fecha_solicitud' => 'required|date',
+                'alumno' => 'required|exists:Usuarios,id_usuario',
+            ]);
+            $dataToUpdate = $validated;
+        }
+
         if ($user->rol === 'Administrador') {
             $validated = $request->validate([
                 'estado' => 'required|in:Pendiente,Aprobada',
-                'fecha_respuesta' => 'nullable|date',
-                'fecha_solicitud' => 'required|date',
-                'alumno' => 'required|exists:Usuarios,id_usuario',
             ]);
+            $dataToUpdate = $validated;
 
             if ($validated['estado'] === 'Aprobada') {
-                $validated['fecha_respuesta'] = now();
-                $validated['administrador'] = $user->id_usuario;
+                $dataToUpdate['fecha_respuesta'] = now();
+                $dataToUpdate['administrador'] = $user->id_usuario;
+                
+                event(new SolicitudPruebaRespondida($solicitud));
+            } else {
+                $dataToUpdate['fecha_respuesta'] = null;
+                $dataToUpdate['administrador'] = null;
             }
-
-            event(new SolicitudPruebaRespondida($solicitud));
-
-        } else {
-            $validated = $request->validate([
-                'fecha_solicitud' => 'required|date',
-                'alumno' => 'required|exists:Usuarios,id_usuario',
-            ]);
+        }
+        
+        if (empty($dataToUpdate)) {
+            return redirect()->route('solicitudes.index')->with('error', 'No tienes permisos para realizar esta acción.');
         }
 
-        $solicitud->update($validated);
+        $solicitud->update($dataToUpdate);
 
-        return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba actualizado exitosamente');
+        return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba actualizada exitosamente');
     }
 
     public function destroy(string $id)
     {
         $solicitud = Solicitud::findOrFail($id);
         $solicitud->delete();
-
-        return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba eliminado exitosamente');
+        return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba eliminada exitosamente');
     }
 }

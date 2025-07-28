@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Events\UsuarioCreado;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioController extends Controller
 {
@@ -73,15 +74,26 @@ class UsuarioController extends Controller
             'apellidos' => 'required|max:60',
             'correo' => 'required|email|max:45|unique:Usuarios,correo,'.$usuario->id_usuario.',id_usuario',
             'rol' => 'required|in:Administrador,Coordinador,Alumno',
+            // La contraseña es opcional en la actualización
+            'password' => ['nullable', 'confirmed', Password::min(8)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+            ],
         ]);
 
-        if ($request->filled('contraseña')) {
-            $validated['contraseña'] = Hash::make($request->contraseña);
+        // Solo actualiza la contraseña si el campo no está vacío
+        if ($request->filled('password')) {
+            // El campo en la BD es 'contraseña'
+            $validated['contraseña'] = Hash::make($validated['password']);
         }
 
-        \DB::transaction(function () use ($validated) {
+        // --- LA SOLUCIÓN: Pasar $usuario al scope de la transacción ---
+        DB::transaction(function () use ($usuario, $validated) {
             $usuario->update($validated);
         });
+        // -----------------------------------------------------------
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente');
     }

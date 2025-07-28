@@ -6,7 +6,7 @@
     </x-slot>
 
     <div>
-        <div class="max-w-6xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="block mb-8">
                 <a href="{{ route('evaluaciones.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Evaluación</a>
             </div>
@@ -17,19 +17,20 @@
                             <table class="min-w-full divide-y divide-gray-200 w-full">
                                 <thead>
                                     <tr>
-                                        <th scope="col" width="50" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-1/12">
                                             ID
                                         </th>
-                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-2/12">
                                             Categoría de señal
                                         </th>
-                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-2/12">
                                             Calificación media
                                         </th>
-                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-5/12">
                                             Comentarios
                                         </th>
-                                        <th scope="col" width="200" class="px-6 py-3 bg-purple-900">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-2/12">
+                                            Acciones
                                         </th>
                                     </tr>
                                 </thead>
@@ -50,8 +51,8 @@
                                                 {{ $evaluacion->calificacion_media }}
                                             </td>
 
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $evaluacion->comentarios }}
+                                            <td class="px-6 py-4 text-sm text-gray-900" title="{{ $evaluacion->comentarios }}">
+                                                {{ \Illuminate\Support\Str::limit($evaluacion->comentarios, 75, '...') }}
                                             </td>
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -60,7 +61,7 @@
                                                 <form class="inline-block" action="{{ route('evaluaciones.destroy', $evaluacion->id_evaluacion) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
+                                                    <button type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2 cursor-pointer">Eliminar</button>
                                                 </form>
                                             </td>
                                         </tr>

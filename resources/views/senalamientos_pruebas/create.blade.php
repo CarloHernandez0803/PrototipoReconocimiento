@@ -62,6 +62,9 @@
 
                 <!-- Botón de Submit -->
                 <div class="flex justify-end">
+                    <a href="{{ route('senalamientos_pruebas.index') }}" class="mr-4 inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+                        {{ __('Cancelar') }}
+                    </a>
                     <x-button type="submit" class="bg-indigo-600 hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900">
                         {{ __('Guardar Lote') }}
                     </x-button>

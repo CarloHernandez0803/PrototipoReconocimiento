@@ -57,10 +57,8 @@ Route::middleware(['web'])->group(function () {
         Route::resource('senalamientos_pruebas', SenPruebaController::class);
         Route::get('/senalamientos/prueba/{id}/imagen/{index}', [SenPruebaController::class, 'mostrarImagen'])->name('senalamientos.prueba.imagen');
 
-        Route::get('resoluciones/create/{id}', [ResolucionController::class, 'create'])->name('resoluciones.create');
-        Route::post('resoluciones/store/{id}', [ResolucionController::class, 'store'])->name('resoluciones.store');
-        Route::get('resoluciones/edit/{id}', [ResolucionController::class, 'edit'])->name('resoluciones.edit');
-        Route::put('resoluciones/update/{id}', [ResolucionController::class, 'update'])->name('resoluciones.update');
+        Route::get('/resoluciones/create/{incidencia}', [ResolucionController::class, 'create'])->name('resoluciones.create');
+        Route::post('/resoluciones/store/{incidencia}', [ResolucionController::class, 'store'])->name('resoluciones.store');
 
         Route::get('/base_datos', [BaseDatosController::class, 'index'])->name('base_datos.index');
         Route::get('/base_datos/backup', [BaseDatosController::class, 'backup'])->name('base_datos.backup');

@@ -1,98 +1,100 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detalles del Lote de Señalamientos para Prueba') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Detalles del Lote Señalamientos para Prueba #{{ $lote->id_senalamiento_prueba }}
+            </h2>
+            <a href="{{ route('senalamientos_pruebas.index') }}" class="px-4 py-2 bg-purple-900 text-white rounded hover:bg-purple-800 transition duration-300 text-sm font-medium">
+                Volver a la Lista
+            </a>
+        </div>
     </x-slot>
 
-    <div>
-        <div class="max-w-6xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="flex flex-col">
-                <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-200 w-full">
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('ID') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $lote->id_senalamiento_prueba }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Descripción') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $lote->descripcion }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Categoría') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $lote->categoria }}
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Imágenes') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            @foreach($imagenes as $index => $ruta)
-                                                <div class="relative group">
-                                                    <div class="h-32 w-full bg-gray-100 rounded-md shadow-md flex items-center justify-center overflow-hidden">
-                                                        <img src="{{ route('senalamientos.prueba.imagen', ['id' => $lote->id_senalamiento_prueba, 'index' => $index]) }}?v={{ time() }}" 
-                                                            alt="Imagen {{ $index + 1 }}" 
-                                                            class="max-h-full max-w-full object-contain"
-                                                            onerror="this.onerror=null;this.src='{{ asset('images/placeholder.png') }}'">
-                                                    </div>
-                                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-30">
-                                                        <button onclick="mostrarImagenModal('{{ route('senalamientos.prueba.imagen', ['id' => $lote->id_senalamiento_prueba, 'index' => $index]) }}')" 
-                                                                class="bg-white text-black px-2 py-1 rounded text-xs font-bold">
-                                                            Ver Completa
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Fecha de creación') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $lote->fecha_creacion ? $lote->fecha_creacion->format('d/m/Y H:i') : __('No disponible') }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            
+            <div class="bg-purple-900 px-4 py-5 sm:px-6">
+                <h3 class="text-lg font-semibold leading-6 text-white">
+                    Información del Lote
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-white">
+                    Detalles completos del lote de señalamientos para pruebas.
+                </p>
             </div>
-            <div class="block mt-8 flex space-x-4">
-                <a href="{{ route('senalamientos_pruebas.index') }}" class="bg-purple-900 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                    {{ __('Volver a la lista') }}
-                </a>
+
+            <div class="border-t border-gray-200">
+                <dl>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">ID del Lote</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lote->id_senalamiento_prueba }}</dd>
+                    </div>
+
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Nombre del Lote</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lote->nombre_lote }}</dd>
+                    </div>
+
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Categoría</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                {{ $lote->categoria }}
+                            </span>
+                        </dd>
+                    </div>
+                    
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Fecha de Creación</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lote->fecha_creacion ? \Carbon\Carbon::parse($lote->fecha_creacion)->format('d/m/Y H:i') : 'No disponible' }}</dd>
+                    </div>
+
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Descripción</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 whitespace-normal break-words">
+                            {{ $lote->descripcion }}
+                        </dd>
+                    </div>
+
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Imágenes del Lote</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            @if(count($imagenes) > 0)
+                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    @foreach($imagenes as $index => $ruta)
+                                        <div class="relative group">
+                                            <div class="h-32 w-full bg-gray-200 rounded-md shadow-md flex items-center justify-center overflow-hidden">
+                                                <img src="{{ route('senalamientos.prueba.imagen', ['id' => $lote->id_senalamiento_prueba, 'index' => $index]) }}?v={{ time() }}" 
+                                                     alt="Imagen {{ $index + 1 }}" 
+                                                     class="max-h-full max-w-full object-contain"
+                                                     onerror="this.onerror=null;this.src='{{ asset('images/placeholder.png') }}'">
+                                            </div>
+                                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-50 rounded-md">
+                                                <button onclick="mostrarImagenModal('{{ route('senalamientos.prueba.imagen', ['id' => $lote->id_senalamiento_prueba, 'index' => $index]) }}?v={{ time() }}')" 
+                                                        class="bg-white text-black px-2 py-1 rounded text-xs font-bold">
+                                                    Ver Completa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-gray-500">Este lote no contiene imágenes.</p>
+                            @endif
+                        </dd>
+                    </div>
+                </dl>
             </div>
         </div>
     </div>
 
-    <div id="imagenModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-75">
-        <div class="bg-white rounded-lg max-w-4xl max-h-screen overflow-auto p-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Imagen Completa</h3>
-                <button onclick="document.getElementById('imagenModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+    <div id="imagenModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-75" onclick="this.classList.add('hidden')">
+        <div class="bg-white rounded-lg max-w-4xl max-h-screen overflow-auto p-4" onclick="event.stopPropagation()">
+            <div class="flex justify-end items-center mb-2">
+                <button onclick="document.getElementById('imagenModal').classList.add('hidden')" class="text-gray-600 hover:text-gray-900 text-2xl font-bold">
                     &times;
                 </button>
             </div>
-            <img id="modalImagen" src="" alt="Imagen completa" class="max-w-full max-h-[80vh] mx-auto">
+            <img id="modalImagen" src="" alt="Imagen completa" class="max-w-full max-h-[85vh] mx-auto">
         </div>
     </div>
 

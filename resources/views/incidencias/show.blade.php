@@ -1,88 +1,77 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detalles del Reporte de Incidencia') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Detalles de la Incidencia #{{ $incidencia->id_incidencia }}
+            </h2>
+            <a href="{{ route('incidencias.index') }}" class="px-4 py-2 bg-purple-900 text-white rounded hover:bg-purple-800 transition duration-300 text-sm font-medium">
+                Volver a la Lista
+            </a>
+        </div>
     </x-slot>
 
-    <div>
-        <div class="max-w-6xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="flex flex-col">
-                <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-200 w-full">
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('ID') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->id_incidencia }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Tipo de incidencia') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->tipo_experiencia }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Descripción') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->descripcion }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Resolución') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        @if ($incidencia->resolucion)
-                                            <div class="mb-2">
-                                                <p><strong>Estado:</strong> {{ $incidencia->resolucion->estado }}</p>
-                                                <p><strong>Fecha:</strong> {{ $incidencia->resolucion->fecha_resolucion ? $incidencia->resolucion->fecha_resolucion->format('d/m/Y H:i') : 'No disponible' }}</p>
-                                            </div>
-                                            <div class="mt-2">
-                                                <a href="{{ route('resoluciones.edit', $incidencia->resolucion->id_resolucion) }}"
-                                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded shadow">
-                                                    ✏️ Editar Resolución
-                                                </a>
-                                            </div>
-                                        @else
-                                            <a href="{{ route('resoluciones.create', $incidencia->id_incidencia) }}"
-                                            class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow">
-                                                ➕ Registrar Resolución
-                                            </a>
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Fecha de reporte') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->fecha_reporte ? $incidencia->fecha_reporte->format('d/m/Y H:i') : __('No disponible') }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Usuario') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $incidencia->usuarioCoordinador->nombre }} {{ $incidencia->usuarioCoordinador->apellidos }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            
+            <div class="bg-purple-900 px-4 py-5 sm:px-6">
+                <h3 class="text-lg font-semibold leading-6 text-white">
+                    Información de la Incidencia
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-white">
+                    Detalles completos del reporte de incidencia registrado.
+                </p>
             </div>
-            <div class="block mt-8">
-                <a href="{{ route('incidencias.index') }}" class="bg-purple-900 hover:bg-gray-300 text-white font-bold py-2 px-4 rounded">{{ __('Volver a la lista') }}</a>
+
+            <div class="border-t border-gray-200">
+                <dl>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">ID de Incidencia</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $incidencia->id_incidencia }}</dd>
+                    </div>
+
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Reportado por</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $incidencia->usuarioCoordinador->nombre }} {{ $incidencia->usuarioCoordinador->apellidos }}</dd>
+                    </div>
+
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Tipo de Incidencia</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                {{ $incidencia->tipo_experiencia }}
+                            </span>
+                        </dd>
+                    </div>
+
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Fecha de Reporte</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $incidencia->fecha_reporte ? \Carbon\Carbon::parse($incidencia->fecha_reporte)->format('d/m/Y H:i') : 'No disponible' }}</dd>
+                    </div>
+
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Descripción</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 whitespace-normal break-words">
+                            {{ $incidencia->descripcion }}
+                        </dd>
+                    </div>
+                    
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Estado Actual</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    @php $estado = $incidencia->estado_actual; @endphp
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    @if ($estado == 'Resuelto') bg-green-100 text-green-800
+                                    @elseif ($estado == 'En Proceso') bg-yellow-100 text-yellow-800
+                                    @else bg-red-100 text-red-800 @endif">
+                                        {{ $estado }}
+                                    </span>
+                                </div>
+                            </div>
+                        </dd>
+                    </div>
+                </dl>
             </div>
         </div>
     </div>

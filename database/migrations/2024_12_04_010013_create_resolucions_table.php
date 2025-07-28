@@ -10,16 +10,19 @@ return new class extends Migration
     {
         Schema::create('Resolucion_Incidencias', function (Blueprint $table) {
             $table->id('id_resolucion');
-            $table->enum('estado', [
-                'Pendiente',
-                'En Proceso',
-                'Resuelto'
-            ]);
-            $table->timestamp('fecha_resolucion')->nullable()->default(null);
+            
             $table->foreignId('incidencia')
-                  ->constrained('Incidencias', 'id_incidencia')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                ->constrained('Incidencias', 'id_incidencia')
+                ->onDelete('cascade');
+            
+            $table->foreignId('id_administrador')
+                ->constrained('Usuarios', 'id_usuario');
+
+            $table->enum('estado', ['Pendiente', 'En Proceso', 'Resuelto']);
+            
+            $table->text('comentario');
+
+            $table->timestamp('fecha_resolucion')->useCurrent();
         });
     }
 

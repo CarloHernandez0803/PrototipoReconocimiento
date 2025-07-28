@@ -17,11 +17,11 @@ return [
 
     'timezone' => 'UTC',
 
-    'locale' => 'es-MX',
+    'locale' => 'es',
 
-    'fallback_locale' => 'es-MX',
+    'fallback_locale' => 'es',
 
-    'faker_locale' => 'es-MX',
+    'faker_locale' => 'es',
 
     'key' => env('APP_KEY'),
 

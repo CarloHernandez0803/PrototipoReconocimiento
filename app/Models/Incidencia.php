@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Resolucion;
-use App\Models\Usuario;
 
 class Incidencia extends Model
 {
@@ -26,13 +24,18 @@ class Incidencia extends Model
         'fecha_reporte' => 'datetime',
     ];
 
-    public function resolucion()
+    public function resoluciones()
     {
-        return $this->hasOne(Resolucion::class, 'incidencia', 'id_incidencia');
+        return $this->hasMany(Resolucion::class, 'incidencia', 'id_incidencia')->orderBy('fecha_resolucion', 'desc');
     }
 
     public function usuarioCoordinador()
     {
         return $this->belongsTo(Usuario::class, 'coordinador', 'id_usuario');
+    }
+
+    public function getEstadoActualAttribute()
+    {
+        return $this->resoluciones->first()->estado ?? 'Pendiente';
     }
 }

@@ -6,9 +6,10 @@
     </x-slot>
 
     <div>
-        <div class="max-w-6xl mx-auto py-10 sm:px-6 lg:px-8">
+        <!-- CAMBIO: Contenedor más ancho -->
+        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="block mb-8">
-                <a href="{{ route('senalamientos_pruebas.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Lote</a>
+                <a href="{{ route('senalamientos_pruebas.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Lote de Prueba</a>
             </div>
             <div class="flex flex-col">
                 <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -17,19 +18,21 @@
                             <table class="min-w-full divide-y divide-gray-200 w-full">
                                 <thead>
                                     <tr>
-                                        <th scope="col" width="50" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <!-- CAMBIO: Se han añadido anchos relativos a las columnas -->
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-1/12">
                                             ID
                                         </th>
-                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-2/12">
                                             Nombre
                                         </th>
-                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-2/12">
                                             Categoría
                                         </th>
-                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-5/12">
                                             Descripción
                                         </th>
-                                        <th scope="col" width="200" class="px-6 py-3 bg-purple-900">
+                                        <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-2/12">
+                                            Acciones
                                         </th>
                                     </tr>
                                 </thead>
@@ -41,17 +44,18 @@
                                             </td>
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                    {{ $senalamiento->nombre_lote }}
+                                                {{ $senalamiento->nombre_lote }}
+                                            </td>
+
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                    {{ $senalamiento->categoria }}
                                                 </span>
                                             </td>
 
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $senalamiento->categoria }}
-                                            </td>
-
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $senalamiento->descripcion }}
+                                            <!-- CAMBIO: Celda con texto recortado y salto de línea -->
+                                            <td class="px-6 py-4 text-sm text-gray-900" title="{{ $senalamiento->descripcion }}">
+                                                {{ \Illuminate\Support\Str::limit($senalamiento->descripcion, 75, '...') }}
                                             </td>
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -60,7 +64,7 @@
                                                 <form class="inline-block" action="{{ route('senalamientos_pruebas.destroy', $senalamiento->id_senalamiento_prueba) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
+                                                    <button type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2 cursor-pointer">Eliminar</button>
                                                 </form>
                                             </td>
                                         </tr>

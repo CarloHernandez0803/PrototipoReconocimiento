@@ -1,72 +1,63 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detalles del Usuario') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Detalles del Usuario #{{ $usuario->id_usuario }}
+            </h2>
+            <a href="{{ route('usuarios.index') }}" class="px-4 py-2 bg-purple-900 text-white rounded hover:bg-purple-800 transition duration-300 text-sm font-medium">
+                Volver a la Lista
+            </a>
+        </div>
     </x-slot>
 
-    <div>
-        <div class="max-w-6xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="flex flex-col">
-                <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                            <table class="min-w-full table-fixed divide-y divide-gray-200 w-full">
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 w-1/6 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('ID') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $usuario->id_usuario }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 w-1/6 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Nombre') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $usuario->nombre }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 w-1/6 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Apellidos') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $usuario->apellidos }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 w-1/6 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Correo') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $usuario->correo }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 w-1/6 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        {{ __('Rol') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-purple-900">
-                                        {{ $usuario->rol }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <th scope="col" class="px-6 py-3 w-1/6 bg-purple-900 text-left text-xs font-medium text-white divide-purple-900 uppercase tracking-wider">
-                                        {{ __('Fecha de Registro') }}
-                                    </th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 bg-white divide-y divide-gray-200">
-                                        {{ $usuario->fecha_registro ? $usuario->fecha_registro->format('d/m/Y H:i') : __('No disponible') }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+    <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            
+            <div class="px-4 py-5 sm:px-6 bg-purple-900">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <img class="h-12 w-12 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($usuario->nombre) }}&color=7F9CF5&background=EBF4FF" alt="Avatar de {{ $usuario->nombre }}">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold leading-6 text-white">
+                            {{ $usuario->nombre }} {{ $usuario->apellidos }}
+                        </h3>
+                        <p class="mt-1 max-w-2xl text-sm text-white">
+                            ID de Usuario: {{ $usuario->id_usuario }}
+                        </p>
                     </div>
                 </div>
             </div>
-            <div class="block mt-8">
-                <a href="{{ route('usuarios.index') }}" class="bg-purple-900 hover:bg-gray-300 text-white font-bold py-2 px-4 rounded">{{ __('Volver a la lista') }}</a>
+
+            <div class="border-t border-gray-200">
+                <dl>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Nombre Completo</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $usuario->nombre }} {{ $usuario->apellidos }}</dd>
+                    </div>
+
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Correo Electrónico</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $usuario->correo }}</dd>
+                    </div>
+
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Rol</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                @if($usuario->rol === 'Administrador') bg-purple-100 text-purple-800
+                                @elseif($usuario->rol === 'Coordinador') bg-blue-100 text-blue-800
+                                @else bg-gray-100 text-gray-800 @endif">
+                                {{ $usuario->rol }}
+                            </span>
+                        </dd>
+                    </div>
+
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Fecha de Registro</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $usuario->fecha_registro ? \Carbon\Carbon::parse($usuario->fecha_registro)->format('d/m/Y H:i:s') : 'No disponible' }}</dd>
+                    </div>
+                </dl>
             </div>
         </div>
     </div>
