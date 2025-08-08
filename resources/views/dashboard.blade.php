@@ -29,19 +29,19 @@
             <div id="graficosSection" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Carga de Lotes para Entrenamiento</h3><button onclick="downloadExcelReport('recursos')" class="download-button">Descargar Excel</button></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Carga de Lotes para Entrenamiento</h3><button onclick="downloadExcelReport('recursos')" class="download-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Descargar Excel</button></div>
                         <div class="relative h-96"><canvas id="recursosChart"></canvas></div>
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Rendimiento Histórico de Entrenamientos</h3><button onclick="downloadExcelReport('eficacia')" class="download-button">Descargar Excel</button></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Rendimiento Histórico de Entrenamientos</h3><button onclick="downloadExcelReport('eficacia')" class="download-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Descargar Excel</button></div>
                         <div class="relative h-96"><canvas id="eficaciaChart"></canvas></div>
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Estado Actual de Solicitudes</h3><button onclick="downloadExcelReport('solicitudes')" class="download-button">Descargar Excel</button></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Estado Actual de Solicitudes</h3><button onclick="downloadExcelReport('solicitudes')" class="download-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Descargar Excel</button></div>
                         <div class="relative h-96"><canvas id="solicitudesChart"></canvas></div>
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Tipos de Experiencias Reportadas</h3><button onclick="downloadExcelReport('experiencias')" class="download-button">Descargar Excel</button></div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold text-gray-900">Tipos de Experiencias Reportadas</h3><button onclick="downloadExcelReport('experiencias')" class="download-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Descargar Excel</button></div>
                         <div class="relative h-96"><canvas id="experienciasChart"></canvas></div>
                     </div>
                 </div>
@@ -49,14 +49,14 @@
 
             <div id="tablasSection" class="tab-content hidden space-y-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Resumen de Incidencias</h2><button onclick="downloadTableReport('incidencias', 'pdf')" class="download-button">Descargar PDF</button></div>
+                    <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Resumen de Incidencias</h2><button onclick="downloadTableReport('incidencias', 'pdf')" class="download-button bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Descargar PDF</button></div>
                     <div id="loadingIndicatorIncidencias" class="hidden text-center py-4 text-gray-500"><p>Cargando datos...</p></div>
                     <div id="errorContainerIncidencias" class="hidden mb-4"></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"><div class="bg-blue-50 p-4 rounded-lg"><p class="text-sm text-gray-600">Total</p><p class="text-2xl font-bold" id="totalIncidencias">0</p></div><div class="bg-green-50 p-4 rounded-lg"><p class="text-sm text-gray-600">Resueltas</p><p class="text-2xl font-bold" id="incidenciasResueltas">0</p></div><div class="bg-yellow-50 p-4 rounded-lg"><p class="text-sm text-gray-600">% Resueltas</p><p class="text-2xl font-bold" id="porcentajeResueltas">0%</p></div><div class="bg-red-50 p-4 rounded-lg"><p class="text-sm text-gray-600">Tiempo Promedio</p><p class="text-2xl font-bold" id="tiempoPromedioIncidencias">N/A</p></div></div>
                     <div class="overflow-x-auto"><table class="min-w-full bg-white"><thead class="bg-gray-50"><tr><th class="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase">Tipo</th><th class="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase">Total</th><th class="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase">Tiempo Promedio</th><th class="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase">Estado</th><th class="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase">Reportado por</th></tr></thead><tbody id="incidenciasTableBody" class="divide-y divide-gray-200"></tbody></table></div>
                 </div>
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                     <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Actividad de Usuarios</h2><button onclick="downloadTableReport('usuarios', 'pdf')" class="download-button">Descargar PDF</button></div>
+                     <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Actividad de Usuarios</h2><button onclick="downloadTableReport('usuarios', 'pdf')" class="download-button bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Descargar PDF</button></div>
                     <div id="loadingIndicatorUsuarios" class="hidden text-center py-4 text-gray-500"><p>Cargando datos...</p></div>
                     <div id="errorContainerUsuarios" class="hidden mb-4"></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"><div class="bg-blue-50 p-4 rounded-lg"><p class="text-sm text-gray-600">Total Actividades</p><p class="text-2xl font-bold" id="totalActividades">0</p></div><div class="bg-green-50 p-4 rounded-lg"><p class="text-sm text-gray-600">Usuarios Activos</p><p class="text-2xl font-bold" id="usuariosActivos">0</p></div><div class="bg-yellow-50 p-4 rounded-lg"><p class="text-sm text-gray-600">Tiempo Promedio</p><p class="text-2xl font-bold" id="tiempoPromedioUsuarios">N/A</p></div></div>
