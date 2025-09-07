@@ -10,7 +10,12 @@ class EvaluacionController extends Controller
 {
     public function index()
     {
-        $evaluaciones = Evaluacion::paginate(10);
+        $user = Auth::user();
+        if ($user->rol === 'Administrador') {
+            $evaluaciones = Evaluacion::paginate(10);
+        } else {
+            $evaluaciones = Evaluacion::where('alumno', $user->id_usuario)->paginate(10);
+        }
         return view('evaluaciones.index', compact('evaluaciones'));
     }
 

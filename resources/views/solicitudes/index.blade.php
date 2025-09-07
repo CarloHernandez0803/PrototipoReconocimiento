@@ -7,9 +7,11 @@
 
     <div>
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="block mb-8">
-                <a href="{{ route('solicitudes.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Solicitud</a>
-            </div>
+            @if(Auth::user()->rol === 'Administrador' || Auth::user()->rol === 'Coordinador')
+                <div class="block mb-8">
+                    <a href="{{ route('solicitudes.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Solicitud</a>
+                </div>
+            @endif
             <div class="flex flex-col">
                 <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -34,7 +36,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach ($solicitudes as $solicitud)
+                                    @forelse ($solicitudes as $solicitud)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {{ $solicitud->id_solicitud }}
@@ -56,15 +58,24 @@
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <a href="{{ route('solicitudes.show', $solicitud->id_solicitud) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
-                                                <a href="{{ route('solicitudes.edit', $solicitud->id_solicitud) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
-                                                <form class="inline-block" action="{{ route('solicitudes.destroy', $solicitud->id_solicitud) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
-                                                </form>
+                                                @if(Auth::user()->rol === 'Administrador' || Auth::user()->rol === 'Coordinador')
+                                                    <a href="{{ route('solicitudes.edit', $solicitud->id_solicitud) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
+                                                @endif
+
+                                                @if(Auth::user()->id_usuario === $solicitud->coordinador)
+                                                    <form class="inline-block" action="{{ route('solicitudes.destroy', $solicitud->id_solicitud) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2" value="Eliminar">
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">No hay solicitudes de prueba registradas.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

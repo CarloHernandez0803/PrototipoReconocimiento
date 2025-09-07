@@ -1,18 +1,18 @@
 <x-guest-layout>
     <x-authentication-card>
         <x-slot name="logo">
-            <x-authentication-card-logo />
+            <img src="{{ asset('images/upemor.png') }}" alt="Logo" style="width: 120px; height: auto; display: block; margin: 0 auto;" />
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+            {{ __('¿Olvidaste tu contraseña? No hay problema. Solo dinos tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.') }}
         </div>
 
-        @if (session('status'))
+        @session('status')
             <div class="mb-4 font-medium text-sm text-green-600">
                 {{ session('status') }}
             </div>
-        @endif
+        @endsession
 
         <x-validation-errors class="mb-4" />
 
@@ -20,13 +20,13 @@
             @csrf
 
             <div class="block">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-label for="correo" value="{{ __('Correo electrónico') }}" />
+                <x-input id="correo" class="block mt-1 w-full" type="email" name="correo" :value="old('correo')" required autofocus />
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
+                <x-button class="bg-purple-900">
+                    {{ __('Enviar enlace de restablecimiento') }}
                 </x-button>
             </div>
         </form>

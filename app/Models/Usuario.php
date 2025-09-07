@@ -4,15 +4,17 @@ namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 
-class Usuario extends Model implements AuthenticatableContract
+class Usuario extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
-    use HasFactory, Authenticatable, Notifiable;
+    use HasFactory, Authenticatable, CanResetPassword,Notifiable;
 
     protected $table = 'Usuarios';
     protected $primaryKey = 'id_usuario';
@@ -39,6 +41,42 @@ class Usuario extends Model implements AuthenticatableContract
     public function getAuthPassword()
     {
         return $this->contraseña;
+    }
+
+    public function getEmailForPasswordReset()
+    {
+        return $this->correo;
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPassword($token));
+    }
+
+    // Asegúrate de que este método exista para el custom provider
+    public function getAuthIdentifierName()
+    {
+        return 'id_usuario';
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->id_usuario;
+    }
+
+    public function getRememberToken()
+    {
+        return $this->remember_token;
+    }
+
+    public function setRememberToken($value)
+    {
+        $this->remember_token = $value;
+    }
+
+    public function getRememberTokenName()
+    {
+        return 'remember_token';
     }
 
     public function routeNotificationForMail($notification)

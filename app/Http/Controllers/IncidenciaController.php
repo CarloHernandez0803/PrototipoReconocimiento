@@ -13,7 +13,12 @@ class IncidenciaController extends Controller
 {
     public function index()
     {
-        $incidencias = Incidencia::with('resoluciones')->paginate(10);
+        $user = Auth::user();
+        if ($user->rol === 'Administrador') {
+            $incidencias = Incidencia::with('resoluciones')->paginate(10);;
+        } else {
+            $incidencias = Incidencia::where('coordinador', $user->id_usuario)->with('resoluciones')->paginate(10);
+        }
         return view('incidencias.index', compact('incidencias'));
     }
 

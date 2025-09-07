@@ -10,7 +10,7 @@ return [
 
     'username' => 'email',
 
-    'email' => 'email',
+    'email' => 'correo',
 
     'lowercase_usernames' => true,
 

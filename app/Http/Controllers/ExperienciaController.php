@@ -11,7 +11,12 @@ class ExperienciaController extends Controller
 {
     public function index()
     {
-        $experiencias = Experiencia::paginate(10);
+        $user = Auth::user();
+        if ($user->rol === 'Administrador') {
+            $experiencias = Experiencia::paginate(10);
+        } else {
+            $experiencias = Experiencia::where('usuario', $user->id_usuario)->paginate(10);
+        }
         return view('experiencias.index', compact('experiencias'));
     }
 

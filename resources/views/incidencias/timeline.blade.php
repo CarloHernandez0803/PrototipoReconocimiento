@@ -19,7 +19,7 @@
                                     Incidencia #{{ $incidencia->id_incidencia }}: {{ $incidencia->tipo_experiencia }}
                                 </h3>
                                 <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                                    Reportado por: {{ $incidencia->usuarioCoordinador->nombre ?? 'N/A' }}
+                                    Reportado por: {{ $incidencia->usuarioCoordinador->nombre . ' ' . $incidencia->usuarioCoordinador->apellidos ?? 'N/A' }}
                                 </p>
                             </div>
                             <div class="flex-shrink-0">
@@ -57,16 +57,18 @@
                                         <svg class="w-3 h-3 text-blue-800" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
                                     </span>
                                     <h3 class="font-semibold text-gray-900">Actualización de Estado: {{ $resolucion->estado }}</h3>
-                                    <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{ \Carbon\Carbon::parse($resolucion->fecha_resolucion)->format('d/m/Y H:i') }} por {{ $resolucion->administrador->nombre ?? 'Admin' }}</time>
+                                    <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{{ \Carbon\Carbon::parse($resolucion->fecha_resolucion)->format('d/m/Y H:i') }} por {{ $resolucion->administrador ? $resolucion->administrador->nombre . ' ' . $resolucion->administrador->apellidos : 'Admin' }}</time>
                                     <p class="mt-2 text-sm font-normal text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-3">{{ $resolucion->comentario }}</p>
                                 </li>
                                 @endforeach
                             </ol>
-                            <div class="mt-4">
-                                <a href="{{ route('resoluciones.create', $incidencia->id_incidencia) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded shadow-sm text-xs">
-                                    ➕ Añadir Actualización
-                                </a>
-                            </div>
+                            @if(Auth::user()->rol === 'Administrador')
+                                <div class="mt-4">
+                                    <a href="{{ route('resoluciones.create', $incidencia->id_incidencia) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded shadow-sm text-xs">
+                                        ➕ Añadir Actualización
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

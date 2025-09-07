@@ -16,8 +16,13 @@ class SolicitudController extends Controller
         $user = Auth::user();
         if ($user->rol === 'Administrador') {
             $solicitudes = Solicitud::paginate(10);
-        } else {
-            $solicitudes = Solicitud::where('coordinador', $user->id_usuario)->paginate(10);
+        } 
+        else {
+            if ($user->rol === 'Coordinador') {
+                $solicitudes = Solicitud::where('coordinador', $user->id_usuario)->paginate(10);
+            } else {
+                $solicitudes = Solicitud::where('alumno', $user->id_usuario)->paginate(10);
+            }
         }
         return view('solicitudes.index', compact('solicitudes'));
     }
@@ -84,8 +89,6 @@ class SolicitudController extends Controller
             if ($validated['estado'] === 'Aprobada') {
                 $dataToUpdate['fecha_respuesta'] = now();
                 $dataToUpdate['administrador'] = $user->id_usuario;
-                
-                event(new SolicitudPruebaRespondida($solicitud));
             } else {
                 $dataToUpdate['fecha_respuesta'] = null;
                 $dataToUpdate['administrador'] = null;
@@ -97,6 +100,8 @@ class SolicitudController extends Controller
         }
 
         $solicitud->update($dataToUpdate);
+
+        event(new SolicitudPruebaRespondida($solicitud));
 
         return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba actualizada exitosamente');
     }

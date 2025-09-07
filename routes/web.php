@@ -24,6 +24,7 @@ use App\Http\Controllers\ReporteIncidenciasController;
 use App\Http\Controllers\ReporteUsuariosController;
 use App\Http\Controllers\HyperparameterController;
 use App\Http\Controllers\ModuloPrueba;
+use App\Http\Controllers\ModuloEntrenamiento;
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
@@ -36,9 +37,10 @@ Route::middleware(['web'])->group(function () {
     //Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/test-python', function () {
-        return shell_exec('C:\Users\carlo\AppData\Local\Microsoft\WindowsApps\python3.exe -c "print(\'Python funciona\')"');
-    });
+    Route::get('forgot-password', [\Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('forgot-password', [App\Http\Controllers\CustomPasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('reset-password/{token}', [\Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('reset-password', [App\Http\Controllers\CustomNewPasswordController::class, 'store'])->name('password.update');
 
     // Rutas protegidas por autenticación
     Route::middleware(['auth','verificar.sesion', 'verificar.inactividad'])->group(function () {
