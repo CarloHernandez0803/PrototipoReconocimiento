@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SenEntrenamiento extends Model
 {
+    use HasFactory;
+
     protected $table = 'Senalamientos_Entrenamiento';
     protected $primaryKey = 'id_senalamiento_entrenamiento';
     public $timestamps = false;
@@ -16,6 +19,7 @@ class SenEntrenamiento extends Model
         'rutas',
         'categoria',
         'fecha_creacion',
+        'usuario',
     ];
 
     protected $casts = [
@@ -32,5 +36,10 @@ class SenEntrenamiento extends Model
                 'url_publica' => rtrim(env('FTP_BASE_URL'), '/').'/'.ltrim($item, '/')
             ];
         }, $decoded);
+    }
+
+    public function usuarioRelacion()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario', 'id_usuario');
     }
 }

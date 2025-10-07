@@ -13,39 +13,39 @@
                     @method('put')
                     <div class="shadow overflow-hidden sm:rounded-md">
                         <div class="px-4 py-5 bg-white sm:p-6">
-                            <label for="tipo_experiencia" class="block font-medium text-sm text-gray-700">{{ __('Tipo de incidencia') }}</label>
-                            <select name="tipo_experiencia" id="tipo_experiencia" class="form-select rounded-md shadow-sm mt-1 block w-full">
-                                <option value="Error de Sistema" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Error de Sistema' ? 'selected' : '' }}>
+                            <label for="tipo_incidencia" class="block font-medium text-sm text-gray-700">{{ __('Tipo de incidencia') }}</label>
+                            <select name="tipo_incidencia" id="tipo_incidencia" class="form-select rounded-md shadow-sm mt-1 block w-full">
+                                <option value="Error de Sistema" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Error de Sistema' ? 'selected' : '' }}>
                                     {{ __('Error de Sistema') }}
                                 </option>
-                                <option value="Problema de Rendimiento" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Problema de Rendimiento' ? 'selected' : '' }}>
+                                <option value="Problema de Rendimiento" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Problema de Rendimiento' ? 'selected' : '' }}>
                                     {{ __('Problema de Rendimiento') }}
                                 </option>
-                                <option value="Fallo de Seguridad" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Fallo de Seguridad' ? 'selected' : '' }}>
+                                <option value="Fallo de Seguridad" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Fallo de Seguridad' ? 'selected' : '' }}>
                                     {{ __('Fallo de Seguridad') }}
                                 </option>
-                                <option value="Actualizaciones Fallidas" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Actualizaciones Fallidas' ? 'selected' : '' }}>
+                                <option value="Actualizaciones Fallidas" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Actualizaciones Fallidas' ? 'selected' : '' }}>
                                     {{ __('Actualizaciones Fallidas') }}
                                 </option>
-                                <option value="Incidencias en Datos" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Incidencias en Datos' ? 'selected' : '' }}>
+                                <option value="Incidencias en Datos" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Incidencias en Datos' ? 'selected' : '' }}>
                                     {{ __('Incidencias en Datos') }}
                                 </option>
-                                <option value="Problema de Usabilidad" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Problema de Usabilidad' ? 'selected' : '' }}>
+                                <option value="Problema de Usabilidad" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Problema de Usabilidad' ? 'selected' : '' }}>
                                     {{ __('Problema de Usabilidad') }}
                                 </option>
-                                <option value="Solicitudes de Mejora" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Solicitudes de Mejora' ? 'selected' : '' }}>
+                                <option value="Solicitudes de Mejora" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Solicitudes de Mejora' ? 'selected' : '' }}>
                                     {{ __('Solicitudes de Mejora') }}
                                 </option>
-                                <option value="Otros" {{ old('tipo_experiencia', $incidencia->tipo_experiencia) == 'Otros' ? 'selected' : '' }}>
+                                <option value="Otros" {{ old('tipo_incidencia', $incidencia->tipo_incidencia) == 'Otros' ? 'selected' : '' }}>
                                     {{ __('Otros') }}
                                 </option>
                             </select>
-                            @error('tipo')
+                            @error('tipo_incidencia')
                                 <p class="text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
+                        <div class="px-4 py-5 bg-white sm:p-6">
                             <label for="descripcion" class="block font-medium text-sm text-gray-700">Descripción</label>
                             <textarea name="descripcion" id="descripcion" rows="4" class="form-textarea rounded-md shadow-sm mt-1 block w-full">{{ old('descripcion', $incidencia->descripcion) }}</textarea>
                             @error('descripcion')

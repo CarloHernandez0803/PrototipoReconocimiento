@@ -14,7 +14,7 @@ class Incidencia extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'tipo_experiencia',
+        'tipo_incidencia',
         'descripcion',
         'fecha_reporte',
         'coordinador',

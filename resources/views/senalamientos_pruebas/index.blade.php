@@ -6,7 +6,6 @@
     </x-slot>
 
     <div>
-        <!-- CAMBIO: Contenedor más ancho -->
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="block mb-8">
                 <a href="{{ route('senalamientos_pruebas.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Añadir Lote de Prueba</a>
@@ -18,7 +17,6 @@
                             <table class="min-w-full divide-y divide-gray-200 w-full">
                                 <thead>
                                     <tr>
-                                        <!-- CAMBIO: Se han añadido anchos relativos a las columnas -->
                                         <th scope="col" class="px-6 py-3 bg-purple-900 text-left text-xs font-medium text-white uppercase tracking-wider w-1/12">
                                             ID
                                         </th>
@@ -53,7 +51,6 @@
                                                 </span>
                                             </td>
 
-                                            <!-- CAMBIO: Celda con texto recortado y salto de línea -->
                                             <td class="px-6 py-4 text-sm text-gray-900" title="{{ $senalamiento->descripcion }}">
                                                 {{ \Illuminate\Support\Str::limit($senalamiento->descripcion, 75, '...') }}
                                             </td>
@@ -61,11 +58,13 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <a href="{{ route('senalamientos_pruebas.show', $senalamiento->id_senalamiento_prueba) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
                                                 <a href="{{ route('senalamientos_pruebas.edit', $senalamiento->id_senalamiento_prueba) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
-                                                <form class="inline-block" action="{{ route('senalamientos_pruebas.destroy', $senalamiento->id_senalamiento_prueba) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2 cursor-pointer">Eliminar</button>
-                                                </form>
+                                                @if(Auth::user()->rol === 'Coordinador' && Auth::user()->id_usuario === $senalamiento->usuarioRelacion->id_usuario)
+                                                    <form class="inline-block" action="{{ route('senalamientos_pruebas.destroy', $senalamiento->id_senalamiento_prueba) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2 cursor-pointer">Eliminar</button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

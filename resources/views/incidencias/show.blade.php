@@ -38,7 +38,7 @@
                         <dt class="text-sm font-medium text-gray-500">Tipo de Incidencia</dt>
                         <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
-                                {{ $incidencia->tipo_experiencia }}
+                                {{ $incidencia->tipo_incidencia }}
                             </span>
                         </dd>
                     </div>

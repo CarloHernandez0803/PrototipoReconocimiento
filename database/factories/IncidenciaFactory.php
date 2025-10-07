@@ -12,7 +12,7 @@ class IncidenciaFactory extends Factory
     public function definition(): array
     {
         return [
-            'tipo_experiencia' => $this->faker->randomElement([
+            'tipo_incidencia' => $this->faker->randomElement([
                 'Error de Sistema',
                 'Problema de Rendimiento',
                 'Fallo de Seguridad',

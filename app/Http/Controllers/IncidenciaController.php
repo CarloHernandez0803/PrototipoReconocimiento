@@ -30,7 +30,7 @@ class IncidenciaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'tipo_experiencia' => 'required|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
+            'tipo_incidencia' => 'required|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
             'descripcion' => 'required|string',
         ]);
 
@@ -40,7 +40,9 @@ class IncidenciaController extends Controller
             'coordinador' => Auth::id(),
         ]);
 
-        event(new ReporteFalloRegistrado($incidencia));
+        $incidenciaFresh = Incidencia::find($incidencia->id_incidencia);
+
+        event(new ReporteFalloRegistrado($incidenciaFresh));
 
         return redirect()->route('incidencias.index')->with('success', 'Incidencia creada exitosamente');
     }
@@ -62,7 +64,7 @@ class IncidenciaController extends Controller
         $incidencia = Incidencia::findOrFail($id);
         
         $validated = $request->validate([
-            'tipo_experiencia' => 'required|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
+            'tipo_incidencia' => 'required|in:Error de Sistema,Problema de Rendimiento,Fallo de Seguridad,Actualizaciones Fallidas,Incidencias en Datos,Problema de Usabilidad,Solicitudes de Mejora,Otros',
             'descripcion' => 'required|string',
         ]);
 

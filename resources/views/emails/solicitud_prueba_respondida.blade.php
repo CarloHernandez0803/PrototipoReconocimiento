@@ -7,7 +7,7 @@ La solicitud de prueba ha sido respondida con los siguientes detalles:
 - **Estado:** {{ $solicitud->estado }}
 - **Fecha de Respuesta:** {{ $solicitud->fecha_respuesta ? \Carbon\Carbon::parse($solicitud->fecha_respuesta)->format('d/m/Y H:i') : 'Sin respuesta' }}
 
-<x-mail::button :url="url('/solicitudes')">
+<x-mail::button :url="url('solicitudes.show', $solicitud->id_solicitud)">
 Ver Solicitud
 </x-mail::button>
 

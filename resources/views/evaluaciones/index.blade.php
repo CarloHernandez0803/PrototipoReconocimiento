@@ -57,12 +57,15 @@
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <a href="{{ route('evaluaciones.show', $evaluacion->id_evaluacion) }}" class="text-blue-600 hover:text-blue-900 mb-2 mr-2">Ver</a>
-                                                <a href="{{ route('evaluaciones.edit', $evaluacion->id_evaluacion) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
-                                                <form class="inline-block" action="{{ route('evaluaciones.destroy', $evaluacion->id_evaluacion) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2 cursor-pointer">Eliminar</button>
-                                                </form>
+                                                @if(Auth::user()->id_usuario === $evaluacion->usuarioAlumno->id_usuario)
+                                                    <a href="{{ route('evaluaciones.edit', $evaluacion->id_evaluacion) }}" class="text-indigo-600 hover:text-indigo-900 mb-2 mr-2">Editar</a>
+                                                
+                                                    <form class="inline-block" action="{{ route('evaluaciones.destroy', $evaluacion->id_evaluacion) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-900 mb-2 mr-2 cursor-pointer">Eliminar</button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

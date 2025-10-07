@@ -67,18 +67,124 @@
                 <div class="py-12 bg-cover bg-center min-h-screen" style="background-image: url('images/background.jpg'); background-size: cover">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div class="bg-white bg-opacity-75 overflow-hidden shadow-xl sm:rounded-lg">
-                            <div class="p-6 text-center">
-                                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Bienvenido, {{ Auth::user()->nombre . ' ' . Auth::user()->apellidos }}</h3>
-                                <p class="text-gray-600 mb-6 text-lg">
-                                    @if(Auth::user()->rol === 'Coordinador')
-                                        Como coordinador, puedes gestionar solicitudes de prueba y ver tu calendario de eventos.
-                                    @elseif(Auth::user()->rol === 'Alumno')
-                                        Como alumno, puedes solicitar pruebas y ver el estado de tus solicitudes.
-                                    @endif
+                            <div class="p-6">
+                                <h3 class="text-3xl font-bold text-gray-800 mb-2 text-center">Bienvenido, {{ Auth::user()->nombre . ' ' . Auth::user()->apellidos }}</h3>
+                                <p class="text-gray-600 mb-6 text-lg text-center">
+                                    {{ Auth::user()->rol === 'Coordinador' ? 'Panel de Control - Coordinador' : 'Panel de Estudiante' }}
                                 </p>
-                                <div class="mt-8">
-                                    <p class="text-sm text-gray-500">
-                                        Utiliza el menú de navegación para acceder a las funciones disponibles.
+                                
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <div class="bg-white p-6 rounded-lg shadow-md">
+                                        <h4 class="text-xl font-semibold text-purple-900 mb-4 border-b pb-2">
+                                            {{ Auth::user()->rol === 'Coordinador' ? 'Funciones Principales' : 'Mis Funciones' }}
+                                        </h4>
+                                        
+                                        @if(Auth::user()->rol === 'Coordinador')
+                                        <div class="space-y-3">
+                                            <div class="flex items-start">
+                                                <span class="text-green-500 mr-2">✓</span>
+                                                <span><strong>Gestión de Solicitudes:</strong> Administrar solicitudes de prueba propias</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-green-500 mr-2">✓</span>
+                                                <span><strong>Gestión de Incidencias:</strong> Reportar y seguir incidencias del sistema</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-green-500 mr-2">✓</span>
+                                                <span><strong>Administración de Lotes:</strong> Gestionar imágenes para entrenamiento y pruebas</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Gestión de Evaluaciones:</strong> Administrar evaluaciones/calificación de modelos de reconocimiento y redes neuronales</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Gestión de Experiencias:</strong> Gestionar mis experiencias con el sistema</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Gestión de Preguntas:</strong> Administrar preguntas y ver las de otros usuarios</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-green-500 mr-2">✓</span>
+                                                <span><strong>Entrenamiento de Modelos:</strong> Crear y entrenar modelos de reconocimiento</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Pruebas:</strong> Realizar pruebas con modelos entrenados</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-green-500 mr-2">✓</span>
+                                                <span><strong>Calendario:</strong> Visualizar todas las solicitudes programadas</span>
+                                            </div>
+                                        </div>
+                                        @else
+                                        <div class="space-y-3">
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Evaluaciones:</strong> Administrar evaluaciones/calificación de modelos de reconocimiento y redes neuronales</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Experiencias:</strong> Gestionar mis experiencias con el sistema</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Preguntas:</strong> Administrar preguntas y ver las de otros usuarios</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Solicitudes:</strong> Ver el estado de mis solicitudes de prueba</span>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="text-blue-500 mr-2">✓</span>
+                                                <span><strong>Pruebas:</strong> Realizar pruebas con modelos entrenados</span>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="bg-white p-6 rounded-lg shadow-md">
+                                        <h4 class="text-xl font-semibold text-purple-900 mb-4 border-b pb-2">
+                                            {{ Auth::user()->rol === 'Coordinador' ? 'Vistas del Sistema' : 'Mi Actividad' }}
+                                        </h4>
+                                        
+                                        @if(Auth::user()->rol === 'Coordinador')
+                                        <div class="space-y-4">
+                                            <p class="text-gray-700">
+                                                Como coordinador, tienes acceso completo al sistema de reconocimiento de señales, incluyendo:
+                                            </p>
+                                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                                <li><strong>Línea de Tiempo:</strong> Seguimiento de cambios en incidencias</li>
+                                                <li><strong>Entrenamientos Avanzados:</strong> Configuración de parámetros de modelos</li>
+                                                <li><strong>Pruebas Programadas:</strong> Acceso en fechas autorizadas</li>
+                                                <li><strong>Gestión Completa:</strong> Control sobre solicitudes, incidencias y recursos</li>
+                                                <li><strong>Solicitudes:</strong> Visualización de calendario con todas las actividades</li>
+                                                <li><strong>Retroalimentación:</strong> Compartir experiencias y preguntas</li>
+                                            </ul>
+                                        </div>
+                                        @else
+                                        <div class="space-y-4">
+                                            <p class="text-gray-700">
+                                                Como alumno, puedes interactuar con el sistema de reconocimiento mediante:
+                                            </p>
+                                            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                                <li><strong>Pruebas Programadas:</strong> Acceso en fechas autorizadas</li>
+                                                <li><strong>Modelos Pre-entrenados:</strong> Utilización de redes neuronales configuradas</li>
+                                                <li><strong>Retroalimentación:</strong> Compartir experiencias y preguntas</li>
+                                                <li><strong>Seguimiento:</strong> Monitoreo del estado de tus solicitudes</li>
+                                            </ul>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 text-center">
+                                    <p class="text-sm text-gray-500 mb-2">
+                                        Utiliza el menú de navegación para acceder a todas las funciones disponibles.
+                                    </p>
+                                    <p class="text-xs text-gray-400">
+                                        Sistema de Reconocimiento de Señales - {{ date('Y') }}
                                     </p>
                                 </div>
                             </div>

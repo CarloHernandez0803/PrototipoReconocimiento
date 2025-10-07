@@ -31,6 +31,6 @@ class ResolucionController extends Controller
 
         event(new SeguimientoFalloActualizado($resolucion));
 
-        return redirect()->route('incidencias.show', $incidencia->id_incidencia)->with('success', 'La resolución de la incidencia ha sido actualizada.');
+        return redirect()->route('incidencias.timeline')->with('success', 'La resolución de la incidencia ha sido actualizada.');
     }
 }

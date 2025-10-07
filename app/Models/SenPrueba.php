@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SenPrueba extends Model
 {
+    use HasFactory;
+    
     protected $table = 'Senalamientos_Prueba';
     protected $primaryKey = 'id_senalamiento_prueba';
     public $timestamps = false;
@@ -16,6 +19,7 @@ class SenPrueba extends Model
         'rutas',
         'categoria',
         'fecha_creacion',
+        'usuario',
     ];
 
     protected $casts = [
@@ -32,5 +36,10 @@ class SenPrueba extends Model
                 'url_publica' => rtrim(env('FTP_BASE_URL'), '/').'/'.ltrim($item, '/')
             ];
         }, $decoded);
+    }
+
+    public function usuarioRelacion()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario', 'id_usuario');
     }
 }

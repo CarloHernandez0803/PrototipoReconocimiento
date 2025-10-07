@@ -11,8 +11,8 @@
                 @csrf
 
                 <div>
-                    <label for="tipo_experiencia" class="block font-medium text-sm text-gray-700">Tipo de incidencia</label>
-                    <select id="tipo_experiencia" name="tipo_experiencia" class="form-select rounded-md shadow-sm mt-1 block w-full">
+                    <label for="tipo_incidencia" class="block font-medium text-sm text-gray-700">Tipo de incidencia</label>
+                    <select id="tipo_incidencia" name="tipo_incidencia" class="form-select rounded-md shadow-sm mt-1 block w-full">
                         <option value="Error de Sistema">Error de Sistema</option>
                         <option value="Problema de Rendimiento">Problema de Rendimiento</option>
                         <option value="Fallo de Seguridad">Fallo de Seguridad</option>
@@ -22,7 +22,7 @@
                         <option value="Solicitudes de Mejora">Solicitudes de Mejora</option>
                         <option value="Otros">Otros</option>
                     </select>
-                    @error('tipo_experiencia')
+                    @error('tipo_incidencia')
                         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
                 </div>

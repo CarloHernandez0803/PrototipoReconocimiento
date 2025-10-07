@@ -46,7 +46,8 @@ class SenPruebaController extends Controller
             'nombre_lote' => $request->nombre_lote,
             'descripcion' => $request->descripcion,
             'categoria' => $request->categoria,
-            'rutas' => json_encode($rutas)
+            'rutas' => json_encode($rutas),
+            'usuario' => Auth::id(),
         ]);
 
         return redirect()->route('senalamientos_pruebas.index')->with('success', 'Lote subido correctamente');

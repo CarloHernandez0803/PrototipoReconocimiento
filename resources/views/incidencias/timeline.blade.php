@@ -16,7 +16,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                    Incidencia #{{ $incidencia->id_incidencia }}: {{ $incidencia->tipo_experiencia }}
+                                    Incidencia #{{ $incidencia->id_incidencia }}: {{ $incidencia->tipo_incidencia }}
                                 </h3>
                                 <p class="mt-1 max-w-2xl text-sm text-gray-500">
                                     Reportado por: {{ $incidencia->usuarioCoordinador->nombre . ' ' . $incidencia->usuarioCoordinador->apellidos ?? 'N/A' }}

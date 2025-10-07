@@ -33,7 +33,7 @@
 
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
-                                                    {{ $incidencia->tipo_experiencia }}
+                                                    {{ $incidencia->tipo_incidencia }}
                                                 </span>
                                             </td>
 

@@ -1,14 +1,18 @@
 <x-mail::message>
-# Nuevo Reporte de Fallo Registrado
+# Nuevo Reporte de Incidencia Registrado
 
-Se ha registrado un nuevo reporte de fallo con los siguientes detalles:
+Se ha registrado una nueva incidencia con los siguientes detalles:
 
-- **ID de Incidencia:** {{ $incidencia->id_incidencia }}
-- **Tipo de Fallo:** {{ $incidencia->tipo_experiencia }}
-- **Fecha de Reporte:** {{ $incidencia->fecha_reporte }}
+- **ID de Incidencia:** #{{ $incidencia->id_incidencia }}
+- **Tipo de Incidencia:** {{ $incidencia->tipo_incidencia ?? 'No especificado' }}
+- **Fecha de Reporte:** {{ $incidencia->fecha_reporte ? \Carbon\Carbon::parse($incidencia->fecha_reporte)->format('d/m/Y H:i') : 'Fecha no disponible' }}
+- **Coordinador Reportante:** {{ $incidencia->usuarioCoordinador ? ($incidencia->usuarioCoordinador->nombre . ' ' . $incidencia->usuarioCoordinador->apellidos) : 'No asignado' }}
 
-<x-mail::button :url="url('/incidencias')">
-Ver Incidencia
+**Descripción:**
+{{ $incidencia->descripcion ?? 'Sin descripción proporcionada' }}
+
+<x-mail::button :url="route('incidencias.show', $incidencia->id_incidencia)">
+Ver Detalles de la Incidencia
 </x-mail::button>
 
 Gracias,<br>

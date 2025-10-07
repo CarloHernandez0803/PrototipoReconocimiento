@@ -8,28 +8,35 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\SolicitudPruebaRecibida;
 use App\Events\SolicitudPruebaRespondida;
+use Illuminate\Support\Facades\Log;
 
 class SolicitudController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
+        
+        $query = Solicitud::with(['usuarioCoordinador', 'usuarioAdministrador', 'usuarioAlumno']);
+        
         if ($user->rol === 'Administrador') {
-            $solicitudes = Solicitud::paginate(10);
-        } 
-        else {
+            $solicitudes = $query->paginate(10);
+        } else {
             if ($user->rol === 'Coordinador') {
-                $solicitudes = Solicitud::where('coordinador', $user->id_usuario)->paginate(10);
+                $solicitudes = $query->where('coordinador', $user->id_usuario)->paginate(10);
             } else {
-                $solicitudes = Solicitud::where('alumno', $user->id_usuario)->paginate(10);
+                $solicitudes = $query->where('alumno', $user->id_usuario)->paginate(10);
             }
         }
+        
         return view('solicitudes.index', compact('solicitudes'));
     }
 
     public function create()
     {
-        $alumnos = Usuario::where('rol', 'Alumno')->get();
+        $alumnos = Usuario::where('rol', 'Alumno')
+                    ->select('id_usuario', 'nombre', 'apellidos')
+                    ->get();
+                    
         return view('solicitudes.create', compact('alumnos'));
     }
 
@@ -46,22 +53,31 @@ class SolicitudController extends Controller
         $validated['coordinador'] = $user->id_usuario;
 
         $solicitud = Solicitud::create($validated);
-
-        event(new SolicitudPruebaRecibida($solicitud));
+        
+        try {
+            event(new SolicitudPruebaRecibida($solicitud->fresh()));
+        } catch (\Exception $e) {
+            Log::error('Error al disparar evento SolicitudPruebaRecibida: ' . $e->getMessage());
+        }
 
         return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba creada exitosamente');
     }
 
     public function show(string $id)
     {
-        $solicitud = Solicitud::findOrFail($id);
+        $solicitud = Solicitud::with(['usuarioCoordinador', 'usuarioAdministrador', 'usuarioAlumno'])->findOrFail($id);
+                      
         return view('solicitudes.show', compact('solicitud'));
     }
     
     public function edit(string $id)
     {
         $solicitud = Solicitud::findOrFail($id);
-        $alumnos = Usuario::where('rol', 'Alumno')->get();
+        
+        $alumnos = Usuario::where('rol', 'Alumno')
+                    ->select('id_usuario', 'nombre', 'apellidos')
+                    ->get();
+                    
         return view('solicitudes.edit', compact('solicitud', 'alumnos'));
     }
 
@@ -69,6 +85,9 @@ class SolicitudController extends Controller
     {
         $solicitud = Solicitud::findOrFail($id);
         $user = Auth::user();
+        
+        $estadoOriginal = $solicitud->estado;
+        $dispararEvento = false;
         
         $dataToUpdate = [];
 
@@ -86,12 +105,16 @@ class SolicitudController extends Controller
             ]);
             $dataToUpdate = $validated;
 
-            if ($validated['estado'] === 'Aprobada') {
-                $dataToUpdate['fecha_respuesta'] = now();
-                $dataToUpdate['administrador'] = $user->id_usuario;
-            } else {
-                $dataToUpdate['fecha_respuesta'] = null;
-                $dataToUpdate['administrador'] = null;
+            if ($estadoOriginal !== $validated['estado']) {
+                $dispararEvento = true;
+                
+                if ($validated['estado'] === 'Aprobada') {
+                    $dataToUpdate['fecha_respuesta'] = now();
+                    $dataToUpdate['administrador'] = $user->id_usuario;
+                } else {
+                    $dataToUpdate['fecha_respuesta'] = null;
+                    $dataToUpdate['administrador'] = null;
+                }
             }
         }
         
@@ -101,7 +124,13 @@ class SolicitudController extends Controller
 
         $solicitud->update($dataToUpdate);
 
-        event(new SolicitudPruebaRespondida($solicitud));
+        if ($dispararEvento) {
+            try {
+                event(new SolicitudPruebaRespondida($solicitud));
+            } catch (\Exception $e) {
+                Log::error('Error al disparar evento SolicitudPruebaRespondida: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba actualizada exitosamente');
     }
@@ -110,6 +139,7 @@ class SolicitudController extends Controller
     {
         $solicitud = Solicitud::findOrFail($id);
         $solicitud->delete();
+        
         return redirect()->route('solicitudes.index')->with('success', 'Solicitud de prueba eliminada exitosamente');
     }
 }

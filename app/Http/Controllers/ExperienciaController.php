@@ -38,7 +38,9 @@ class ExperienciaController extends Controller
             'usuario' => Auth::id(),
         ]);
 
-        event(new ExperienciaUsuarioRegistrada($experiencia));
+        $experienciaFresh = Experiencia::find($experiencia->id_experiencia);
+
+        event(new ExperienciaUsuarioRegistrada($experienciaFresh));
 
         return redirect()->route('experiencias.index')->with('success', 'Experiencia de usuario creada exitosamente');
     }
